@@ -52,12 +52,12 @@ class ApiController extends BaseController
 
     public function my_list(Request $r, $model)
     {
-        $u = Utils::get_user($r);
+        /* $u = Utils::get_user($r);
         if ($u == null) {
             Utils::error("Unauthonticated.");
-        }
+        } */
         $model = "App\Models\\" . $model;
-        $data = $model::where('company_id', $u->company_id)->limit(100000)->get();
+        $data = $model::where([])->limit(1000000)->get();
         Utils::success($data, "Listed successfully.");
     }
 

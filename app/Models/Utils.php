@@ -34,7 +34,7 @@ class Utils
             //if started less than 2 hours ago return
             if ($video_downloaded_to_server_start_time->addHours(2)->greaterThan($now)) {
                 return false;
-            } 
+            }
             $video_is_downloaded_to_server_status_yes->video_downloaded_to_server_end_time = Carbon::now();
             $video_is_downloaded_to_server_status_yes->video_is_downloaded_to_server_status = 'error';
             $video_is_downloaded_to_server_status_yes->video_is_downloaded_to_server = 'yes';
@@ -82,7 +82,11 @@ class Utils
         $file_name = time() . "_" . rand(1000, 100000);
         //cjheck if contains ? and remove ? and everything after
         //get file extension
-        $file_extension = explode('.', $download_url)[1];
+        if (str_contains($download_url, '.')) {
+            $file_extension = explode('.', $download_url)[1];
+        }else{
+            $file_extension = '.mp4';
+        }
         //check if file extension is not mp4 or mkv or avi or flv or wmv or mov or webm
         if (
             $file_extension != 'mp4' &&
@@ -94,9 +98,9 @@ class Utils
             $file_extension != 'webm'
         ) {
             $file_name .= '.mp4';
-        }else if($file_extension == 'webm'){
+        } else if ($file_extension == 'webm') {
             $file_name .= '.mp4';
-        } 
+        }
 
 
         $local_file_path = $public_path . '/' . $file_name;

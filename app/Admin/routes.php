@@ -12,6 +12,10 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index')->name('home');
+
+    $router->resource('scraper-models', ScraperModelController::class);
+    $router->resource('movies', MovieModelController::class);
+
     $router->resource('companies', CompanyController::class);
     $router->resource('stock-categories', StockCategoryController::class);
     $router->resource('stock-sub-categories', StockSubCategoryController::class);

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Utils;
 use Illuminate\Support\Facades\Route;
 
 
@@ -9,4 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/home', function () {
     return die('welcome home');
 });
- */
+*/
+Route::get('/down', function () {
+    Utils::system_boot(); 
+});

@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\MovieModel;
 use App\Models\StockRecord;
 use App\Models\User;
 use Encore\Admin\Controllers\Dashboard;
@@ -20,13 +21,26 @@ class HomeController extends Controller
         $u = Admin::user();
         $company = Company::find($u->company_id);
 
+        $no_downloading = MovieModel::where([
+            'video_is_downloaded_to_server_status' => 'downloading',
+        ])->first();
+
+        $now_text = '-';
+        if ($no_downloading != null) {
+            $now_text = $no_downloading->title;
+            //started 
+            if ($no_downloading->video_downloaded_to_server_start_time) {
+                $now_text .= ' - started at ' . $no_downloading->video_downloaded_to_server_start_time;
+            }
+        }
+
         return $content
             ->title($company->name . " - Dashboard")
-            ->description('Hello ' . $u->name)
+            ->description('Now Downloading ' . $now_text)
             ->row(function (Row $row) {
                 $row->column(3, function (Column $column) {
-                    $count = User::where('company_id', Admin::user()->company_id)->count();
-                    $box = new Box('Employees', '<h3 style="text-align:right; margin: 0; font-size: 40px; font-weight: 800" >' . $count . '</h3>');
+                    $count = MovieModel::count();
+                    $box = new Box('Movies', '<h3 style="text-align:right; margin: 0; font-size: 40px; font-weight: 800" >' . $count . '</h3>');
                     $box->style('danger')
                         ->solid();
                     $column->append($box);
@@ -39,10 +53,14 @@ class HomeController extends Controller
                     )
                         ->sum('total_sales');
                     $u = Admin::user();
-                    $company = Company::find($u->company_id);
-                    $box = new Box('Todays sales', '<h3 style="text-align:right; margin: 0; font-size: 40px; font-weight: 800" >'
-                        . $company->currency . " " . number_format($total_sales) .
-                        '</h3>');
+
+                    $company = MovieModel::where([
+                        'video_is_downloaded_to_server_status' => 'success',
+                        'video_is_downloaded_to_server' => 'yes',
+                    ])->count();
+                    $box = new Box('Downloaded Movies', '<h3 style="text-align:right; margin: 0; font-size: 40px; font-weight: 800" >'
+                        . " " . number_format($company) .
+                        ' Movies</h3>');
                     $box->style('danger')
                         ->solid();
                     $column->append($box);

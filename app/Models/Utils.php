@@ -82,7 +82,7 @@ class Utils
         $file_name = time() . "_" . rand(1000, 100000);
         //cjheck if contains ? and remove ? and everything after
         //get file extension
-        $file_extension = explode('.', $file_name)[1];
+        $file_extension = explode('.', $download_url)[1];
         //check if file extension is not mp4 or mkv or avi or flv or wmv or mov or webm
         if (
             $file_extension != 'mp4' &&

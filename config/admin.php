@@ -13,7 +13,7 @@ return [
     | login page.
     |
     */
-    'name' => 'InvetoTrack',
+    'name' => 'Luganda Movies',
 
     /*
     |--------------------------------------------------------------------------
@@ -24,7 +24,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => '<b>Inveto</b> admin',
+    'logo' => '<b>Luganda Movies</b> admin',
 
     /*
     |--------------------------------------------------------------------------

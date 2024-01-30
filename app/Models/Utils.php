@@ -79,7 +79,7 @@ class Utils
 
         //get last url segment
         $url_segments = explode('/', $download_url);
-        $file_name = time() . "_" . rand(1000, 100000) . $url_segments[count($url_segments) - 1];
+        $file_name = time() . "_" . rand(1000, 100000);
         //cjheck if contains ? and remove ? and everything after
         //get file extension
         $file_extension = explode('.', $file_name)[1];

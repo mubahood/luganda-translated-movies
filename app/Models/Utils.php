@@ -81,9 +81,24 @@ class Utils
         $url_segments = explode('/', $download_url);
         $file_name = time() . "_" . rand(1000, 100000) . $url_segments[count($url_segments) - 1];
         //cjheck if contains ? and remove ? and everything after
-        if (str_contains($file_name, '?')) {
-            $file_name = explode('?', $file_name)[0];
-        }
+        //get file extension
+        $file_extension = explode('.', $file_name)[1];
+        //check if file extension is not mp4 or mkv or avi or flv or wmv or mov or webm
+        if (
+            $file_extension != 'mp4' &&
+            $file_extension != 'mkv' &&
+            $file_extension != 'avi' &&
+            $file_extension != 'flv' &&
+            $file_extension != 'wmv' &&
+            $file_extension != 'mov' &&
+            $file_extension != 'webm'
+        ) {
+            $file_name .= '.mp4';
+        }else if($file_extension == 'webm'){
+            $file_name .= '.mp4';
+        } 
+
+
         $local_file_path = $public_path . '/' . $file_name;
 
         //set unlimited time limit

@@ -12,7 +12,7 @@ Route::get('/home', function () {
 });
 */
 
-Route::get('/africa', function () {
+Route::post('/africa', function () {
     $m = new \App\Models\AfricaTalkingResponse();
     $m->sessionId = request()->get('sessionId');
     $m->status = request()->get('status');
@@ -28,7 +28,7 @@ Route::get('/africa', function () {
 
     //change response to xml
     header('Content-type: text/plain');
-    
+
     echo '<Response>
             <Play url="https://www2.cs.uic.edu/~i101/SoundFiles/gettysburg10.wav"/>
     </Response>';

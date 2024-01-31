@@ -19,22 +19,20 @@ Route::get('/africa', function () {
     $m->phoneNumber = request()->get('phoneNumber');
     $m->errorMessage = request()->get('errorMessage');
     $m->post = json_encode($_POST);
-    $m->get = json_encode($_GET);
+    $m->get = json_encode($_GET); 
     try {
         $m->save();
     } catch (\Throwable $th) {
         //throw $th;
-    } finally {
-        echo '<Response>
-            <Play url="https://www2.cs.uic.edu/~i101/SoundFiles/gettysburg10.wav"/>
-    </Response>';
-        die();
-    }
+    }  
 
+    //change response to xml
+    header('Content-type: text/plain');
+    
     echo '<Response>
             <Play url="https://www2.cs.uic.edu/~i101/SoundFiles/gettysburg10.wav"/>
     </Response>';
-    die();
+    die(); 
 });
 Route::get('/down', function () {
     Utils::system_boot();

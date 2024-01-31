@@ -11,7 +11,7 @@ Route::group([
     'as'            => config('admin.route.prefix') . '.',
 ], function (Router $router) {
 
-    $router->get('/', 'HomeController@index')->name('home');
+    $router->post('/', 'HomeController@index')->name('home');
 
     $router->resource('scraper-models', ScraperModelController::class);
     $router->resource('movies', MovieModelController::class);
@@ -25,5 +25,6 @@ Route::group([
     $router->resource('stock-records', StockRecordController::class);
     $router->resource('companies-edit', CompanyEditController::class);
     $router->resource('africa-app', AfricaTalkingResponseController::class); 
-
+//https://omulimisa.org/api/v1/e-learning/inbound-outbound
+//https://omulimisa.org/api/v1/e-learning/events
 });

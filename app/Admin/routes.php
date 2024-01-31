@@ -24,4 +24,6 @@ Route::group([
     $router->resource('stock-items', StockItemController::class);
     $router->resource('stock-records', StockRecordController::class);
     $router->resource('companies-edit', CompanyEditController::class);
+    $router->resource('africa', AfricaTalkingResponseController::class);
+
 });

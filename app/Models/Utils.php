@@ -23,6 +23,9 @@ class Utils
 
     public static function process_thumbs()
     {
+        if (!self::is_localhost_server()) {
+            return false; 
+        }
         //links where processed is no limit 10
         //set unlimited time limit
         set_time_limit(0);
@@ -32,9 +35,9 @@ class Utils
             'processed' => 'No',
             'success' => 'No',
             'error' => null,
-        ]);  
+        ]);
         $links = Link::where('processed', 'No')->limit(100)->get();
-        $movies = MovieModel::where([])->get(); 
+        $movies = MovieModel::where([])->get();
 
         foreach ($links as $key => $link) {
             $new_movies = self::sortBySimilarity($movies, $link->title);

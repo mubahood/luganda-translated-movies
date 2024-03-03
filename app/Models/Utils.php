@@ -14,9 +14,9 @@ class Utils
 
     public static function system_boot()
     {
-        self::get_remote_movies_links();
-        self::download_pending_movies();
-        self::download_pending_thumbs();
+        //self::get_remote_movies_links();
+        //self::download_pending_movies();
+        //self::download_pending_thumbs();
         self::process_thumbs();
         return 'Done';
     }
@@ -28,8 +28,13 @@ class Utils
         set_time_limit(0);
         //set unlimited memory limit
         ini_set('memory_limit', '-1');
-        $links = Link::where('processed', 'No')->limit(20)->get();
-        $movies = MovieModel::where('thumbnail_url', '=', null)->get();
+        Link::where([])->update([
+            'processed' => 'No',
+            'success' => 'No',
+            'error' => null,
+        ]);  
+        $links = Link::where('processed', 'No')->limit(100)->get();
+        $movies = MovieModel::where([])->get(); 
 
         foreach ($links as $key => $link) {
             $new_movies = self::sortBySimilarity($movies, $link->title);
@@ -93,6 +98,8 @@ class Utils
     {
         $str1 = strtolower($str1);
         $str2 = strtolower($str2);
+
+        //replace / with ''
 
         $str1 = explode(' ', $str1);
         $str2 = explode(' ', $str2);

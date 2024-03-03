@@ -52,7 +52,7 @@ class MovieModelController extends AdminController
             if ($thumbnail_url == null || strlen($thumbnail_url) < 2) {
                 return 'N/A';
             }
-            return '<img src="' . $thumbnail_url . '" style="width:100px;height:100px;">';
+            return '<img src="storage/' . $thumbnail_url . '" style="width:100px;height:100px;">';
         })->sortable();
         $grid->column('description', __('Description'))->hide();
         /*         $grid->column('year', __('Year'));

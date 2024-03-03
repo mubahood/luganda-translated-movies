@@ -17,14 +17,18 @@ class Utils
         self::get_remote_movies_links();
         self::download_pending_movies();
         self::download_pending_thumbs();
-        //self::process_thumbs();
+        self::process_thumbs();
         return 'Done';
     }
 
     public static function process_thumbs()
     {
         //links where processed is no limit 10
-        $links = Link::where('processed', 'No')->limit(10)->get();
+        //set unlimited time limit
+        set_time_limit(0);
+        //set unlimited memory limit
+        ini_set('memory_limit', '-1');
+        $links = Link::where('processed', 'No')->limit(20)->get();
         $movies = MovieModel::where('thumbnail_url', '=', null)->get();
 
         foreach ($links as $key => $link) {
@@ -274,6 +278,7 @@ class Utils
             $page->save();
         }
 
+        return true;
         die('done');
 
 

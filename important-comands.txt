@@ -1,10 +1,11 @@
-php artisan make:model AfricaTalkingResponse -m
+php artisan make:model Page -m
 
-php artisan admin:make AfricaTalkingResponseController --model=App\\Models\\AfricaTalkingResponse
+php artisan admin:make PageController --model=App\\Models\\Page
+
+php artisan db:seed --class=App\\Models\\Page
 
 
-
-php artisan make:migration add_currency_to_companies --table=companies
+php artisan make:migration add_status_links --table=links
 
 
 php artisan migrate

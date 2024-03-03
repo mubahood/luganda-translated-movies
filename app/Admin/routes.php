@@ -24,7 +24,10 @@ Route::group([
     $router->resource('stock-items', StockItemController::class);
     $router->resource('stock-records', StockRecordController::class);
     $router->resource('companies-edit', CompanyEditController::class);
-    $router->resource('africa-app', AfricaTalkingResponseController::class); 
-//https://omulimisa.org/api/v1/e-learning/inbound-outbound
-//https://omulimisa.org/api/v1/e-learning/events
+    $router->resource('africa-app', AfricaTalkingResponseController::class);
+    $router->resource('links', LinkController::class);
+    $router->resource('pages', PageController::class);
+
+    //https://omulimisa.org/api/v1/e-learning/inbound-outbound
+    //https://omulimisa.org/api/v1/e-learning/events
 });

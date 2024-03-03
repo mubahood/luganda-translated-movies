@@ -41,14 +41,19 @@ class MovieModelController extends AdminController
         $grid->column('external_url', __('External URL'))->sortable()->hide();
         $grid->column('url', __('Url'))->sortable()
             ->display(function ($_url) {
-                if(strlen($_url) < 2){
+                if (strlen($_url) < 2) {
                     return 'N/A';
                 }
-                $_url = url('/storage/' . $_url); 
+                $_url = url('/storage/' . $_url);
                 return '<a href="' . $_url . '" target="_blank">' . 'VIEW' . '</a>';
-            }); 
+            });
         $grid->column('image_url', __('Image url'))->hide();
-        $grid->column('thumbnail_url', __('Thumbnail url'))->hide();
+        $grid->column('thumbnail_url', __('Thumbnail url'))->display(function ($thumbnail_url) {
+            if ($thumbnail_url == null || strlen($thumbnail_url) < 2) {
+                return 'N/A';
+            }
+            return '<img src="' . $thumbnail_url . '" style="width:100px;height:100px;">';
+        })->sortable();
         $grid->column('description', __('Description'))->hide();
         /*         $grid->column('year', __('Year'));
         $grid->column('rating', __('Rating'));

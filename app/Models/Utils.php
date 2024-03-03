@@ -16,9 +16,368 @@ class Utils
     {
         self::get_remote_movies_links();
         self::download_pending_movies();
-        die('done');
+        self::download_pending_thumbs();
+        //self::process_thumbs();
         return 'Done';
     }
+
+    public static function process_thumbs()
+    {
+        //links where processed is no limit 10
+        $links = Link::where('processed', 'No')->limit(10)->get();
+        $movies = MovieModel::where('thumbnail_url', '=', null)->get();
+
+        foreach ($links as $key => $link) {
+            $new_movies = self::sortBySimilarity($movies, $link->title);
+            $movie = null;
+            $count = 0;
+            $down_link = null;
+            foreach ($new_movies as $key => $val) {
+                $similarity = self::has_similar_words($val->title, $link->title);
+
+                if ($similarity < 2) {
+                    continue;
+                }
+
+                $count++;
+                if ($count > 5) {
+                    break;
+                }
+
+                $movie = $val;
+                break;
+            }
+
+            if ($movie == null) {
+                $link->processed = 'Yes';
+                $link->success = 'No';
+                $link->error = 'No similar movie found';
+                continue;
+            }
+
+            $thumbnail_url = 'https://movies.ug' . $link->thumbnail;
+            $public_path = public_path() . '/storage/images';
+
+            //check if public_path does not exist
+            if (!file_exists($public_path)) {
+                mkdir($public_path);
+            }
+
+            //download file
+            try {
+                $ch = curl_init($thumbnail_url);
+                $fp = fopen($public_path . '/' . $link->id . '.jpg', 'wb');
+                curl_setopt($ch, CURLOPT_FILE, $fp);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_exec($ch);
+                $link->processed = 'Yes';
+                $link->success = 'Yes';
+                $link->save();
+                $movie->thumbnail_url = 'images/' . $link->id . '.jpg';
+                $movie->save();
+            } catch (\Throwable $th) {
+                $link->processed = 'Yes';
+                $link->success = 'No';
+                $link->error = $th->getMessage();
+                $link->save();
+            }
+        }
+    }
+
+    //check if two strings contains similar words
+    public static function has_similar_words($str1, $str2)
+    {
+        $str1 = strtolower($str1);
+        $str2 = strtolower($str2);
+
+        $str1 = explode(' ', $str1);
+        $str2 = explode(' ', $str2);
+        $similar_words = 0;
+        $skip = [
+            'the',
+            'a',
+            'an',
+            'and',
+            'or',
+            'of',
+            'in',
+            'on',
+            'at',
+            'to',
+            'for',
+            'with',
+            'by',
+            'from',
+            'up',
+            'Series',
+            'Season',
+            'Episode',
+            'Movie',
+            'Film',
+            'TV',
+            'Show',
+            'Full',
+            'HD',
+            '1080p',
+            '720p',
+            '480p',
+            '360p',
+            '240p',
+            '144p',
+            'Download',
+            'Watch',
+            'Online',
+            'Free',
+            'Streaming',
+            'Video',
+            'Clip',
+            'Vj',
+        ];
+        //coverting skip to lowercase
+        $skip = array_map('strtolower', $skip);
+
+        foreach ($str1 as $key => $val) {
+            //$skip to lowercase
+            $val = strtolower($val);
+            //str1 to lowercase
+            $val = strtolower($val);
+            //skip if in skip
+            if (in_array($val, $skip)) {
+                continue;
+            }
+
+            if (in_array($val, $skip)) {
+                continue;
+            }
+            if (in_array($val, $str2)) {
+                $similar_words++;
+            }
+        }
+        return $similar_words;
+    }
+
+
+    public static function getSimilarityScore($str1, $str2)
+    {
+        $len1 = mb_strlen($str1, 'UTF-8');
+        $len2 = mb_strlen($str2, 'UTF-8');
+
+        $matrix = [];
+
+        for ($i = 0; $i <= $len1; $i++) {
+            $matrix[$i] = [$i];
+        }
+
+        for ($j = 0; $j <= $len2; $j++) {
+            $matrix[0][$j] = $j;
+        }
+
+        for ($i = 1; $i <= $len1; $i++) {
+            for ($j = 1; $j <= $len2; $j++) {
+                $cost = (mb_substr($str1, $i - 1, 1, 'UTF-8') != mb_substr($str2, $j - 1, 1, 'UTF-8')) ? 1 : 0;
+                $matrix[$i][$j] = min(
+                    $matrix[$i - 1][$j] + 1,
+                    $matrix[$i][$j - 1] + 1,
+                    $matrix[$i - 1][$j - 1] + $cost
+                );
+            }
+        }
+
+        return $matrix[$len1][$len2];
+    }
+
+
+    public static function sortBySimilarity($movies, $searchString)
+    {
+        $searchString = strtolower($searchString);
+
+        $sortedMovies = $movies->sortBy(function ($movie) use ($searchString) {
+            return self::getSimilarityScore(strtolower($movie->title), $searchString);
+        });
+
+        return $sortedMovies;
+    }
+
+
+
+
+    //movie search algorithm
+
+    public static function download_pending_thumbs()
+    {
+
+
+        $start_num = 0;
+        $max_num = 10;
+
+        //get last page
+        $last_page = Page::orderBy('id', 'desc')->first();
+        if ($last_page != null) {
+            $start_num = $last_page->id;
+        }
+        $end_num = $start_num + $max_num;
+
+        $base_url = 'https://movies.ug/index.php?page=';
+        for ($i = $start_num; $i < $end_num; $i++) {
+            $url = $base_url . $i;
+
+            //check if there is no Page with this url
+            $page = Page::where('url', $url)->first();
+            if ($page != null) {
+                continue;
+            }
+            $html = null;
+            try {
+                $html = file_get_html($url);
+            } catch (\Throwable $th) {
+                continue;
+            }
+            if ($html == null) {
+                continue;
+            }
+
+
+            foreach ($html->find('a') as $e) {
+                if ($e->href == null) {
+                    continue;
+                }
+                if (!str_contains($e->href, 'play.php?')) {
+                    continue;
+                }
+                if ($e->children == null) {
+                    continue;
+                }
+                foreach ($e->children as $key1 => $child) {
+                    if ($child->tag != 'img') {
+                        continue;
+                    }
+                    if ($child->src == null) {
+                        continue;
+                    }
+                    //check if there is no Link with this src
+                    $link = Link::where('thumbnail', $child->src)->first();
+                    if ($link != null) {
+                        continue;
+                    }
+                    $l = new Link();
+                    $l->thumbnail = $child->src;
+                    $l->title = $child->title;
+                    $l->url = $e->href;
+                    $l->external_id = $e->href;
+                    $l->save();
+                }
+            }
+
+            $page = new Page();
+            $page->url = $url;
+            $page->title = $url;
+            $page->save();
+        }
+
+        die('done');
+
+
+
+        //get last movie where video_is_downloaded_to_server is no
+        $last_movie = MovieModel::where([
+            'image_url' => null,
+        ])->orderBy('id', 'desc')->first();
+
+
+        $search_url = 'https://movies.ug/?search=' . ($last_movie->title);
+
+        die($search_url);
+
+        dd($last_movie->title);
+
+        if ($last_movie == null) {
+            return false;
+        }
+
+        //check if video_downloaded_to_server_start_time time is not null and strlen is greater than 4
+        if (
+            $last_movie->video_downloaded_to_server_start_time != null &&
+            strlen($last_movie->video_downloaded_to_server_start_time) > 4
+        ) {
+            $now = Carbon::now();
+            $video_downloaded_to_server_start_time = Carbon::parse($last_movie->video_downloaded_to_server_start_time);
+            //if started less than 5 minutes ago return
+            if ($video_downloaded_to_server_start_time->addMinutes(5)->greaterThan($now)) {
+                //return false;
+            }
+        }
+
+        $download_url = 'https://images.pexels.com/photos/934011/pexels-photo-934011.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
+        if (!self::is_localhost_server()) {
+            $download_url = $last_movie->external_url;
+        }
+
+        //public_path
+        $public_path = public_path() . '/storage/videos';
+
+        //check if public_path does not exist
+        if (!file_exists($public_path)) {
+            mkdir($public_path);
+        }
+
+        //get last url segment
+        $url_segments = explode('/', $download_url);
+        $file_name = time() . "_" . rand(1000, 100000);
+        //cjheck if contains ? and remove ? and everything after
+        //get file extension
+        if (str_contains($download_url, '.')) {
+            $file_extension = explode('.', $download_url)[1];
+        } else {
+            $file_extension = '.mp4';
+        }
+        //check if file extension is not mp4 or mkv or avi or flv or wmv or mov or webm
+        if (
+            $file_extension != 'mp4' &&
+            $file_extension != 'mkv' &&
+            $file_extension != 'avi' &&
+            $file_extension != 'flv' &&
+            $file_extension != 'wmv' &&
+            $file_extension != 'mov' &&
+            $file_extension != 'webm'
+        ) {
+            $file_name .= '.mp4';
+        } else if ($file_extension == 'webm') {
+            $file_name .= '.mp4';
+        }
+
+
+        $local_file_path = $public_path . '/' . $file_name;
+
+        //set unlimited time limit
+        set_time_limit(0);
+        //set unlimited memory limit
+        ini_set('memory_limit', '-1');
+
+        $last_movie->video_downloaded_to_server_start_time = Carbon::now();
+        $last_movie->video_is_downloaded_to_server_status = 'downloading';
+        $last_movie->save();
+        try {
+            //download file
+            $ch = curl_init($download_url);
+            $fp = fopen($local_file_path, 'wb');
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_exec($ch);
+            $last_movie->video_is_downloaded_to_server_status = 'success';
+            $last_movie->video_is_downloaded_to_server = 'yes';
+            $last_movie->video_is_downloaded_to_server = 'yes';
+            $last_movie->video_downloaded_to_server_end_time = Carbon::now();
+            $last_movie->url = 'videos/' . $file_name;
+            $last_movie->save();
+        } catch (\Throwable $th) {
+            $last_movie->video_is_downloaded_to_server = 'yes';
+            $last_movie->video_is_downloaded_to_server_status = 'error';
+            $last_movie->video_is_downloaded_to_server_error_message = $th->getMessage();
+            $last_movie->save();
+            return false;
+        }
+    }
+
 
     public static function download_pending_movies()
     {
@@ -84,7 +443,7 @@ class Utils
         //get file extension
         if (str_contains($download_url, '.')) {
             $file_extension = explode('.', $download_url)[1];
-        }else{
+        } else {
             $file_extension = '.mp4';
         }
         //check if file extension is not mp4 or mkv or avi or flv or wmv or mov or webm

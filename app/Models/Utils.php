@@ -36,7 +36,7 @@ class Utils
             'success' => 'No',
             'error' => null,
         ]); */
-        $links = Link::where('processed', 'No')->limit(100)->get();
+        $links = Link::where('processed', 'No')->limit(1000)->get();
         $movies = MovieModel::where([])->get();
 
         foreach ($links as $key => $link) {

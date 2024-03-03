@@ -26,13 +26,18 @@ class LinkController extends AdminController
     {
         $grid = new Grid(new Link());
 
-        $grid->column('id', __('Id'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
-        $grid->column('title', __('Title'));
+        $grid->column('id', __('Id'))->sortable();
+        $grid->column('created_at', __('Created at'))->hide();
+        $grid->column('updated_at', __('Updated at'))->hide();
+        $grid->column('title', __('Title'))->sortable();
         $grid->column('url', __('Url'));
         $grid->column('external_id', __('External id'));
         $grid->column('thumbnail', __('Thumbnail'));
+        $grid->column('success', __('success'))->sortable();
+        $grid->column('error', __('error'))->sortable();
+        $grid->column('processed', __('processed'))
+            ->editable('select', ['No' => 'No', 'Yes' => 'Yes'])
+            ->sortable();
 
         return $grid;
     }

@@ -14,18 +14,18 @@ class Utils
 
     public static function system_boot()
     {
-        //self::get_remote_movies_links();
-        //self::download_pending_movies();
-        //self::download_pending_thumbs();
-        self::process_thumbs();
+        self::get_remote_movies_links();
+        self::download_pending_movies();
+        self::download_pending_thumbs();
+        //self::process_thumbs();
         return 'Done';
     }
 
     public static function process_thumbs()
     {
         if (!self::is_localhost_server()) {
-            return false; 
-        } 
+            return false;
+        }
         //links where processed is no limit 10
         //set unlimited time limit
         set_time_limit(0);
@@ -59,7 +59,7 @@ class Utils
                 $movie = $val;
                 break;
             }
-            
+
             if ($movie == null) {
                 $link->processed = 'Yes';
                 $link->success = 'No';
@@ -77,14 +77,14 @@ class Utils
 
             //extension of thumbnail
             $extension = pathinfo($thumbnail_url, PATHINFO_EXTENSION);
-            if($extension == null || $extension == ''){
+            if ($extension == null || $extension == '') {
                 $extension = 'jpg';
             }
- 
+
             //download file
             try {
                 $ch = curl_init($thumbnail_url);
-                $fp = fopen($public_path . '/' . $link->id . '.'.$extension, 'wb');
+                $fp = fopen($public_path . '/' . $link->id . '.' . $extension, 'wb');
                 curl_setopt($ch, CURLOPT_FILE, $fp);
                 curl_setopt($ch, CURLOPT_HEADER, 0);
                 curl_exec($ch);
@@ -92,14 +92,14 @@ class Utils
                 $link->success = 'Yes';
                 $link->save();
                 $movie->thumbnail_url = 'images/' . $link->id . '.jpg';
-                $movie->save(); 
-                echo 'Downloaded ' . $link->id . '. ' . $link->title . ' ' . $link->thumbnail . ' ' . $link->external_id . ' ' . $link->url . ' ' . $link->processed . ' ' . $link->success . ' ' . $link->error . '<br>';   
+                $movie->save();
+                echo 'Downloaded ' . $link->id . '. ' . $link->title . ' ' . $link->thumbnail . ' ' . $link->external_id . ' ' . $link->url . ' ' . $link->processed . ' ' . $link->success . ' ' . $link->error . '<br>';
             } catch (\Throwable $th) {
                 $link->processed = 'Yes';
                 $link->success = 'No';
                 $link->error = $th->getMessage();
-                $link->save(); 
-                echo 'Error ' . $link->id . ' ' . $link->title . ' ' . $link->thumbnail . ' ' . $link->external_id . ' ' . $link->url . ' ' . $link->processed . ' ' . $link->success . ' ' . $link->error . '<br>'; 
+                $link->save();
+                echo 'Error ' . $link->id . ' ' . $link->title . ' ' . $link->thumbnail . ' ' . $link->external_id . ' ' . $link->url . ' ' . $link->processed . ' ' . $link->success . ' ' . $link->error . '<br>';
             }
         }
     }

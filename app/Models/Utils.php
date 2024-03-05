@@ -23,6 +23,7 @@ class Utils
 
     public static function process_thumbs()
     {
+        return false;
         if (!self::is_localhost_server()) {
             return false;
         }
@@ -31,13 +32,13 @@ class Utils
         set_time_limit(0);
         //set unlimited memory limit
         ini_set('memory_limit', '-1');
-        Link::where([])->update([
+        /*  Link::where([])->update([
             'processed' => 'No',
             'success' => 'No',
             'error' => null,
-        ]); 
+        ]);  */
         $links = Link::where('processed', 'No')->limit(3000)->get();
-        $movies = MovieModel::where([])->get(); 
+        $movies = MovieModel::where([])->get();
 
         foreach ($links as $key => $link) {
             $new_movies = self::sortBySimilarity($movies, $link->title);

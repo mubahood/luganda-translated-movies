@@ -14,10 +14,10 @@ class Utils
 
     public static function system_boot()
     {
-        self::get_remote_movies_links();
-        self::download_pending_movies();
-        self::download_pending_thumbs();
-        //self::process_thumbs();
+        // self::get_remote_movies_links();
+        // self::download_pending_movies();
+        // self::download_pending_thumbs();
+        self::process_thumbs();
         return 'Done';
     }
 
@@ -37,7 +37,7 @@ class Utils
             'error' => null,
         ]); */
         $links = Link::where('processed', 'No')->limit(1000)->get();
-        $movies = MovieModel::where([])->get();
+        $movies = MovieModel::where('thumbnail_url',null)->get();
 
         foreach ($links as $key => $link) {
             $new_movies = self::sortBySimilarity($movies, $link->title);
@@ -84,7 +84,7 @@ class Utils
             //download file
             try {
                 $ch = curl_init($thumbnail_url);
-                $fp = fopen($public_path . '/' . $link->id . '.' . $extension, 'wb');
+                $fp = fopen($public_path . '/' . $movie->id . '.' . $extension, 'wb');
                 curl_setopt($ch, CURLOPT_FILE, $fp);
                 curl_setopt($ch, CURLOPT_HEADER, 0);
                 curl_exec($ch);

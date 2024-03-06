@@ -25,8 +25,9 @@ class LinkController extends AdminController
      */
     protected function grid()
     {
-        Link::where('school_type', 'Nursary')->update(['school_type' => 'Nursery']);
+        //Link::where('school_type', 'Nursary')->update(['school_type' => 'Nursery']);
         $grid = new Grid(new Link());
+        $grid->quickSearch('title');
         $grid->model()->orderBy('id', 'desc');
         $grid->column('id', __('Id'))->sortable();
         $grid->column('created_at', __('Created at'))->hide();

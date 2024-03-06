@@ -31,12 +31,12 @@ class Utils
         // self::process_thumbs();
 
         //schools
-        //self::get_school_links(1); //Nursery schools
-        //self::get_school_links(2); //Primary schools
-        //self::get_school_links(3); //Secondary schools
-        //self::get_school_links(4); //Tertiary schools
-        //self::get_school_links(5); //University schools
-        self::get_school_profiles(); //University schools
+        // self::get_school_links(1); //Nursery schools
+        // self::get_school_links(2); //Primary schools
+        // self::get_school_links(3); //Secondary schools
+        // self::get_school_links(4); //Tertiary schools
+        // self::get_school_links(5); //University schools
+        self::get_school_profiles(); //profiles
         return 'Done';
     }
 
@@ -276,7 +276,7 @@ class Utils
             //check if there is no Page with this url
             $page = Page::where('url', $url)->first();
             if ($page != null) {
-                // continue;
+                continue;
             }
             $html = null;
             try {
@@ -507,11 +507,11 @@ class Utils
         foreach ($links as $key => $link) {
             $url = 'https://unser.co.ug' . $link->url;
 
-              //check if the url already exists
-              $existingSchool = School::where('url', $url)->first();
-              if ($existingSchool) {
-                  continue;
-              }
+            //check if the url already exists
+            $existingSchool = School::where('url', $url)->first();
+            if ($existingSchool) {
+                continue;
+            }
 
             $html = null;
             try {
@@ -605,7 +605,7 @@ class Utils
                     $school->nearest_school_distance = $data;
                 }
                 if ($title == 'founding year') {
-                    $school->founding_year = $data;
+                    $school->founding_year = (int)str_replace(' ', '', $data);
                 }
                 if ($title == 'level') {
                     $school->level = $data;
@@ -623,8 +623,8 @@ class Utils
                 $school->success = 'No';
                 $school->url = $url;
             }
-            $school->save(); 
-            echo $school->id.". ".$school->name."  ====>  ".$school->district." ";
+            $school->save();
+            echo $school->id . ". " . $school->name . "  ====>  " . $school->district . " ";
         }
 
         return;

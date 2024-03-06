@@ -26,9 +26,9 @@ class SchoolController extends AdminController
     {
         $grid = new Grid(new School());
         $grid->model()->orderBy('name', 'asc');
-        $grid->quickSearch('name', 'district', 'county', 'sub_county', 'parish', 'address', 'p_o_box', 'email', 'website', 'phone', 'fax', 'school_type', 'service_code', 'reg_no', 'center_no', 'operation_status', 'founder', 'funder');
+        $grid->quickSearch('district',);
 
-        $grid->column('id', __('Id'));
+        $grid->column('id', __('Id'))->sortable();
         $grid->column('created_at', __('Created at'))->hide();
         $grid->column('updated_at', __('Updated at'))->hide();
         $grid->column('name', __('Name'))->sortable();
@@ -38,9 +38,9 @@ class SchoolController extends AdminController
         $grid->column('parish', __('Parish'))->sortable();
         $grid->column('address', __('Address'))->hide();
         $grid->column('p_o_box', __('P o box'))->hide();
-        $grid->column('email', __('Email'))->sortable();
-        $grid->column('website', __('Website'))->sortable();
-        $grid->column('phone', __('Phone'))->sortable();
+        $grid->column('email', __('Email'))->sortable()->editable();
+        $grid->column('website', __('Website'))->sortable()->editable();
+        $grid->column('phone', __('Phone'))->sortable()->editable();
         $grid->column('fax', __('Fax'))->hide();
         $grid->column('school_type', __('School Type'))
             ->label([

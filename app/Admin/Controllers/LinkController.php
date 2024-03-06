@@ -53,12 +53,14 @@ class LinkController extends AdminController
                 'Primary' => 'info',
                 'Secondary' => 'success',
                 'Tertiary' => 'danger',
+                'University' => 'warning',
             ])
             ->filter([
                 'Nursery' => 'Nursery',
                 'Primary' => 'Primary',
                 'Secondary' => 'Secondary',
                 'Tertiary' => 'Tertiary',
+                'University' => 'University',
             ])
             ->sortable();
 

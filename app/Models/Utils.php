@@ -34,7 +34,8 @@ class Utils
         //self::get_school_links(1); //Nursery schools
         //self::get_school_links(2); //Primary schools
         //self::get_school_links(3); //Secondary schools
-        self::get_school_links(4); //Tertiary schools
+        //self::get_school_links(4); //Tertiary schools
+        self::get_school_links(5); //University schools
         return 'Done';
     }
 
@@ -259,7 +260,7 @@ class Utils
         } else if ($school_type == 4) {
             $school_type_text = 'Tertiary';
         } else if ($school_type == 5) {
-            $school_type_text = 'College';
+            $school_type_text = 'University';
         } else if ($school_type == 6) {
             $school_type_text = 'Institute';
         }

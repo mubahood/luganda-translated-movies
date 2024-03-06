@@ -32,7 +32,8 @@ class Utils
         
         //schools
         //self::get_school_links(1); //nursary schools
-        self::get_school_links(2); //Primary schools
+        //self::get_school_links(2); //Primary schools
+        self::get_school_links(3); //Secondary schools
         return 'Done';
     }
 

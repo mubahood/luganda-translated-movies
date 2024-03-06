@@ -14,10 +14,25 @@ class Utils
 
     public static function system_boot()
     {
+        //set unlimited time limit
+        set_time_limit(0);
+        //set unlimited memory limit
+        ini_set('memory_limit', '-1');
+        //set unlimited memory limit
+        ini_set('max_execution_time', 0);
+        //set unlimited memory limit
+        ini_set('max_input_time', 0);
+        //set unlimited memory limit
+        ini_set('post_max_size', '100M');
+        //set unlimited memory limit
+        ini_set('upload_max_filesize', '100M');
         // self::get_remote_movies_links();
         // self::download_pending_movies();
-        // self::download_pending_thumbs();
-        self::process_thumbs();
+        // self::process_thumbs();
+        
+        //schools
+        //self::get_school_links(1); //nursary schools
+        self::get_school_links(2); //Primary schools
         return 'Done';
     }
 
@@ -225,6 +240,214 @@ class Utils
 
 
     //movie search algorithm
+
+    public static function get_school_links($school_type)
+    {
+
+        $valid = [1, 2, 3, 4, 5, 6];
+        if (!in_array($school_type, $valid)) {
+            die('Invalid school type');
+        }
+        $school_type_text = 'Nursary'; 
+
+        if ($school_type == 2) {
+            $school_type_text = 'Primary';
+        } else if ($school_type == 3) {
+            $school_type_text = 'Secondary';
+        } else if ($school_type == 4) {
+            $school_type_text = 'University';
+        } else if ($school_type == 5) {
+            $school_type_text = 'College';
+        } else if ($school_type == 6) {
+            $school_type_text = 'Institute';
+        }
+
+        $start_num = 1;
+        $max_num = 131;
+
+
+        $base_url = 'https://unser.co.ug/schools/' . $school_type . '/?dist=';
+        for ($i = $start_num; $i < $max_num; $i++) {
+            $url = $base_url . $i;
+            //check if there is no Page with this url
+            $page = Page::where('url', $url)->first();
+            if ($page != null) {
+                continue;
+            }
+            $html = null;
+            try {
+                $html = file_get_html($url);
+            } catch (\Throwable $th) {
+                continue;
+            }
+            if ($html == null) {
+                continue;
+            }
+
+
+            $table = $html->find('table', 0);
+            if ($table == null) {
+                dd('table not found');
+                continue;
+            }
+            if (!isset($table->children[1])) {
+                dd('table children not found');
+                continue;
+            }
+            if (!isset($table->children[1]->children)) {
+                dd('table children children not found');
+                continue;
+            }
+
+
+
+            foreach ($table->children[1]->children as $e) {
+                $obj = $e->children[0]->find('a', 0);
+                if ($obj == null) {
+                    dd('a not found');
+                    continue;
+                }
+                $link = $obj->href;
+                if ($link == null) {
+                    dd('href not found');
+                    continue;
+                }
+                $title = $obj->plaintext;
+                if ($title == null) {
+                    dd('plaintext not found');
+                    continue;
+                }
+
+                //check if there is no Link with this url
+                $l = Link::where('url', $link)->first();
+                if ($l != null) {
+                    continue;
+                }
+
+                $l = new Link();
+                $l->thumbnail = $link;
+                $l->title = $title;
+                $l->url = $link;
+                $l->external_id = $url;
+                $l->school_type = $school_type_text;
+                $l->type = 'school';
+                $l->success = 'No';
+                $l->error = null;
+                $l->save();
+                echo $l->id . ' ' . $l->title . ' ' . $l->thumbnail . ' ' . $l->external_id . ' ' . $l->url . ' ' . $l->school_type . ' ' . $l->type . ' ' . $l->success . ' ' . $l->error . '<br>'; 
+            }
+
+            $page = new Page();
+            $page->url = $url;
+            $page->title = $url;
+            $page->save();
+        }
+
+        return true;
+        die('done');
+
+
+
+        //get last movie where video_is_downloaded_to_server is no
+        $last_movie = MovieModel::where([
+            'image_url' => null,
+        ])->orderBy('id', 'desc')->first();
+
+
+        $search_url = 'https://movies.ug/?search=' . ($last_movie->title);
+
+        die($search_url);
+
+        dd($last_movie->title);
+
+        if ($last_movie == null) {
+            return false;
+        }
+
+        //check if video_downloaded_to_server_start_time time is not null and strlen is greater than 4
+        if (
+            $last_movie->video_downloaded_to_server_start_time != null &&
+            strlen($last_movie->video_downloaded_to_server_start_time) > 4
+        ) {
+            $now = Carbon::now();
+            $video_downloaded_to_server_start_time = Carbon::parse($last_movie->video_downloaded_to_server_start_time);
+            //if started less than 5 minutes ago return
+            if ($video_downloaded_to_server_start_time->addMinutes(5)->greaterThan($now)) {
+                //return false;
+            }
+        }
+
+        $download_url = 'https://images.pexels.com/photos/934011/pexels-photo-934011.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
+        if (!self::is_localhost_server()) {
+            $download_url = $last_movie->external_url;
+        }
+
+        //public_path
+        $public_path = public_path() . '/storage/videos';
+
+        //check if public_path does not exist
+        if (!file_exists($public_path)) {
+            mkdir($public_path);
+        }
+
+        //get last url segment
+        $url_segments = explode('/', $download_url);
+        $file_name = time() . "_" . rand(1000, 100000);
+        //cjheck if contains ? and remove ? and everything after
+        //get file extension
+        if (str_contains($download_url, '.')) {
+            $file_extension = explode('.', $download_url)[1];
+        } else {
+            $file_extension = '.mp4';
+        }
+        //check if file extension is not mp4 or mkv or avi or flv or wmv or mov or webm
+        if (
+            $file_extension != 'mp4' &&
+            $file_extension != 'mkv' &&
+            $file_extension != 'avi' &&
+            $file_extension != 'flv' &&
+            $file_extension != 'wmv' &&
+            $file_extension != 'mov' &&
+            $file_extension != 'webm'
+        ) {
+            $file_name .= '.mp4';
+        } else if ($file_extension == 'webm') {
+            $file_name .= '.mp4';
+        }
+
+
+        $local_file_path = $public_path . '/' . $file_name;
+
+        //set unlimited time limit
+        set_time_limit(0);
+        //set unlimited memory limit
+        ini_set('memory_limit', '-1');
+
+        $last_movie->video_downloaded_to_server_start_time = Carbon::now();
+        $last_movie->video_is_downloaded_to_server_status = 'downloading';
+        $last_movie->save();
+        try {
+            //download file
+            $ch = curl_init($download_url);
+            $fp = fopen($local_file_path, 'wb');
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_exec($ch);
+            $last_movie->video_is_downloaded_to_server_status = 'success';
+            $last_movie->video_is_downloaded_to_server = 'yes';
+            $last_movie->video_is_downloaded_to_server = 'yes';
+            $last_movie->video_downloaded_to_server_end_time = Carbon::now();
+            $last_movie->url = 'videos/' . $file_name;
+            $last_movie->save();
+        } catch (\Throwable $th) {
+            $last_movie->video_is_downloaded_to_server = 'yes';
+            $last_movie->video_is_downloaded_to_server_status = 'error';
+            $last_movie->video_is_downloaded_to_server_error_message = $th->getMessage();
+            $last_movie->save();
+            return false;
+        }
+    }
+
 
     public static function download_pending_thumbs()
     {

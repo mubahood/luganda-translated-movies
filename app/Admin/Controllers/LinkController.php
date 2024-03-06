@@ -25,7 +25,7 @@ class LinkController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Link());
-
+        $grid->model()->orderBy('id', 'desc');
         $grid->column('id', __('Id'))->sortable();
         $grid->column('created_at', __('Created at'))->hide();
         $grid->column('updated_at', __('Updated at'))->hide();
@@ -37,6 +37,25 @@ class LinkController extends AdminController
         $grid->column('error', __('error'))->sortable();
         $grid->column('processed', __('processed'))
             ->editable('select', ['No' => 'No', 'Yes' => 'Yes'])
+            ->filter('select', ['No' => 'No', 'Yes' => 'Yes']);
+        $grid->column('type', __('Type'))
+            ->label([
+                'Movie' => 'info',
+                'School' => 'success',
+            ])
+            ->filter(['Movie' => 'Movie', 'School' => 'School'])
+            ->sortable();
+        $grid->column('school_type', __('School type'))
+            ->label([
+                'Nursery' => 'info',
+                'Primary' => 'info',
+                'Secondary' => 'success',
+            ])
+            ->filter([
+                'Primary' => 'Primary',
+                'Secondary' => 'Secondary',
+                'Nursery' => 'Nursery',
+            ])
             ->sortable();
 
         return $grid;

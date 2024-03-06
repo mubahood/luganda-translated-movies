@@ -506,6 +506,13 @@ class Utils
 
         foreach ($links as $key => $link) {
             $url = 'https://unser.co.ug' . $link->url;
+
+              //check if the url already exists
+              $existingSchool = School::where('url', $url)->first();
+              if ($existingSchool) {
+                  continue;
+              }
+
             $html = null;
             try {
                 $html = file_get_html($url);
@@ -619,11 +626,7 @@ class Utils
                 $school->success = 'No';
                 $school->url = $url;
 
-                //check if the url already exists
-                $existingSchool = School::where('url', $school->url)->first();
-                if ($existingSchool) {
-                    continue;
-                }
+              
                 $school->save();
                 echo $school->id . ' ' . $school->name . ' ' . $school->district . ' ' . $school->county . ' ' . $school->sub_county . ' ' . $school->parish . ' ' . $school->address . ' ' . $school->p_o_box . ' ' . $school->email . ' ' . $school->website . ' ' . $school->phone . ' ' . $school->fax . ' ' . $school->service_code . ' ' . $school->reg_no . ' ' . $school->center_no . ' ' . $school->operation_status . ' ' . $school->founder . ' ' . $school->funder . '<br>';
             }

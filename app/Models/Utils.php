@@ -522,7 +522,7 @@ class Utils
             if ($html == null) {
                 continue;
             }
-
+            $school = new School();
             $table = $html->find('td');
             foreach ($table as $key => $val) {
                 //key is even, continue
@@ -536,9 +536,6 @@ class Utils
                 $data = trim($table[$key]->plaintext);
 
 
-                $val = $table[$key];
-
-                $school = new School();
                 if ($title == 'name') {
                     $school->name = $data;
                 }
@@ -625,11 +622,9 @@ class Utils
                 $school->replied = 'No';
                 $school->success = 'No';
                 $school->url = $url;
-
-              
-                $school->save();
-                echo $school->id . ' ' . $school->name . ' ' . $school->district . ' ' . $school->county . ' ' . $school->sub_county . ' ' . $school->parish . ' ' . $school->address . ' ' . $school->p_o_box . ' ' . $school->email . ' ' . $school->website . ' ' . $school->phone . ' ' . $school->fax . ' ' . $school->service_code . ' ' . $school->reg_no . ' ' . $school->center_no . ' ' . $school->operation_status . ' ' . $school->founder . ' ' . $school->funder . '<br>';
             }
+            $school->save(); 
+            echo $school->id.". ".$school->name."  ====>  ".$school->district." ";
         }
 
         return;

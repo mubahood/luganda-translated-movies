@@ -7,6 +7,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Termwind\Components\Li;
 
 class LinkController extends AdminController
 {
@@ -24,6 +25,7 @@ class LinkController extends AdminController
      */
     protected function grid()
     {
+        Link::where('school_type', 'Nursary')->update(['school_type' => 'Nursery']);
         $grid = new Grid(new Link());
         $grid->model()->orderBy('id', 'desc');
         $grid->column('id', __('Id'))->sortable();
@@ -50,11 +52,13 @@ class LinkController extends AdminController
                 'Nursery' => 'info',
                 'Primary' => 'info',
                 'Secondary' => 'success',
+                'Tertiary' => 'danger',
             ])
             ->filter([
+                'Nursery' => 'Nursery',
                 'Primary' => 'Primary',
                 'Secondary' => 'Secondary',
-                'Nursery' => 'Nursery',
+                'Tertiary' => 'Tertiary',
             ])
             ->sortable();
 

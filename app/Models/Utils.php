@@ -31,9 +31,10 @@ class Utils
         // self::process_thumbs();
         
         //schools
-        //self::get_school_links(1); //nursary schools
+        //self::get_school_links(1); //Nursery schools
         //self::get_school_links(2); //Primary schools
-        self::get_school_links(3); //Secondary schools
+        //self::get_school_links(3); //Secondary schools
+        self::get_school_links(4); //Tertiary schools
         return 'Done';
     }
 
@@ -249,14 +250,14 @@ class Utils
         if (!in_array($school_type, $valid)) {
             die('Invalid school type');
         }
-        $school_type_text = 'Nursary'; 
+        $school_type_text = 'Nursery'; 
 
         if ($school_type == 2) {
             $school_type_text = 'Primary';
         } else if ($school_type == 3) {
             $school_type_text = 'Secondary';
         } else if ($school_type == 4) {
-            $school_type_text = 'University';
+            $school_type_text = 'Tertiary';
         } else if ($school_type == 5) {
             $school_type_text = 'College';
         } else if ($school_type == 6) {

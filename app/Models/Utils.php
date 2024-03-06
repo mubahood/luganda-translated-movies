@@ -275,7 +275,7 @@ class Utils
             //check if there is no Page with this url
             $page = Page::where('url', $url)->first();
             if ($page != null) {
-                continue;
+               // continue;
             }
             $html = null;
             try {

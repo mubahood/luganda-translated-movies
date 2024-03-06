@@ -29,13 +29,14 @@ class Utils
         // self::get_remote_movies_links();
         // self::download_pending_movies();
         // self::process_thumbs();
-        
+
         //schools
         //self::get_school_links(1); //Nursery schools
         //self::get_school_links(2); //Primary schools
         //self::get_school_links(3); //Secondary schools
         //self::get_school_links(4); //Tertiary schools
-        self::get_school_links(5); //University schools
+        //self::get_school_links(5); //University schools
+        self::get_school_profiles(); //University schools
         return 'Done';
     }
 
@@ -251,7 +252,7 @@ class Utils
         if (!in_array($school_type, $valid)) {
             die('Invalid school type');
         }
-        $school_type_text = 'Nursery'; 
+        $school_type_text = 'Nursery';
 
         if ($school_type == 2) {
             $school_type_text = 'Primary';
@@ -275,7 +276,7 @@ class Utils
             //check if there is no Page with this url
             $page = Page::where('url', $url)->first();
             if ($page != null) {
-               // continue;
+                // continue;
             }
             $html = null;
             try {
@@ -337,7 +338,7 @@ class Utils
                 $l->success = 'No';
                 $l->error = null;
                 $l->save();
-                echo $l->id . ' ' . $l->title . ' ' . $l->thumbnail . ' ' . $l->external_id . ' ' . $l->url . ' ' . $l->school_type . ' ' . $l->type . ' ' . $l->success . ' ' . $l->error . '<br>'; 
+                echo $l->id . ' ' . $l->title . ' ' . $l->thumbnail . ' ' . $l->external_id . ' ' . $l->url . ' ' . $l->school_type . ' ' . $l->type . ' ' . $l->success . ' ' . $l->error . '<br>';
             }
 
             $page = new Page();
@@ -345,6 +346,292 @@ class Utils
             $page->title = $url;
             $page->save();
         }
+
+        return true;
+        die('done');
+
+
+
+        //get last movie where video_is_downloaded_to_server is no
+        $last_movie = MovieModel::where([
+            'image_url' => null,
+        ])->orderBy('id', 'desc')->first();
+
+
+        $search_url = 'https://movies.ug/?search=' . ($last_movie->title);
+
+        die($search_url);
+
+        dd($last_movie->title);
+
+        if ($last_movie == null) {
+            return false;
+        }
+
+        //check if video_downloaded_to_server_start_time time is not null and strlen is greater than 4
+        if (
+            $last_movie->video_downloaded_to_server_start_time != null &&
+            strlen($last_movie->video_downloaded_to_server_start_time) > 4
+        ) {
+            $now = Carbon::now();
+            $video_downloaded_to_server_start_time = Carbon::parse($last_movie->video_downloaded_to_server_start_time);
+            //if started less than 5 minutes ago return
+            if ($video_downloaded_to_server_start_time->addMinutes(5)->greaterThan($now)) {
+                //return false;
+            }
+        }
+
+        $download_url = 'https://images.pexels.com/photos/934011/pexels-photo-934011.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
+        if (!self::is_localhost_server()) {
+            $download_url = $last_movie->external_url;
+        }
+
+        //public_path
+        $public_path = public_path() . '/storage/videos';
+
+        //check if public_path does not exist
+        if (!file_exists($public_path)) {
+            mkdir($public_path);
+        }
+
+        //get last url segment
+        $url_segments = explode('/', $download_url);
+        $file_name = time() . "_" . rand(1000, 100000);
+        //cjheck if contains ? and remove ? and everything after
+        //get file extension
+        if (str_contains($download_url, '.')) {
+            $file_extension = explode('.', $download_url)[1];
+        } else {
+            $file_extension = '.mp4';
+        }
+        //check if file extension is not mp4 or mkv or avi or flv or wmv or mov or webm
+        if (
+            $file_extension != 'mp4' &&
+            $file_extension != 'mkv' &&
+            $file_extension != 'avi' &&
+            $file_extension != 'flv' &&
+            $file_extension != 'wmv' &&
+            $file_extension != 'mov' &&
+            $file_extension != 'webm'
+        ) {
+            $file_name .= '.mp4';
+        } else if ($file_extension == 'webm') {
+            $file_name .= '.mp4';
+        }
+
+
+        $local_file_path = $public_path . '/' . $file_name;
+
+        //set unlimited time limit
+        set_time_limit(0);
+        //set unlimited memory limit
+        ini_set('memory_limit', '-1');
+
+        $last_movie->video_downloaded_to_server_start_time = Carbon::now();
+        $last_movie->video_is_downloaded_to_server_status = 'downloading';
+        $last_movie->save();
+        try {
+            //download file
+            $ch = curl_init($download_url);
+            $fp = fopen($local_file_path, 'wb');
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_exec($ch);
+            $last_movie->video_is_downloaded_to_server_status = 'success';
+            $last_movie->video_is_downloaded_to_server = 'yes';
+            $last_movie->video_is_downloaded_to_server = 'yes';
+            $last_movie->video_downloaded_to_server_end_time = Carbon::now();
+            $last_movie->url = 'videos/' . $file_name;
+            $last_movie->save();
+        } catch (\Throwable $th) {
+            $last_movie->video_is_downloaded_to_server = 'yes';
+            $last_movie->video_is_downloaded_to_server_status = 'error';
+            $last_movie->video_is_downloaded_to_server_error_message = $th->getMessage();
+            $last_movie->save();
+            return false;
+        }
+    }
+
+    //movie search algorithm
+    /* 
+    "id" => 1701
+    "created_at" => "2024-03-06 00:36:50"
+    "updated_at" => "2024-03-06 01:13:57"
+    "title" => "Attiak Public Nursery School"
+    "url" => "/school/2042/"
+    "external_id" => "https://unser.co.ug/schools/1/?dist=1"
+    "thumbnail" => "/school/2042/"
+    "processed" => "No"
+    "success" => "No"
+    "error" => null
+    "type" => "school"
+    "school_type" => "Nursery"
+  ]
+*/
+    public static function get_school_profiles()
+    {
+
+        $links = Link::where('type', 'school')->where('processed', 'No')->limit(100000)->get();
+
+
+        $accepted_keys = [
+            'name',
+            'district',
+            'county',
+            'sub-county',
+            'parish',
+            'address',
+            'p.o.box',
+            'email',
+            'website',
+            'phone',
+            'fax',
+            'service code',
+            'reg no',
+            'center no',
+            'operation satus',
+            'founder',
+            'funder',
+            'boys/girls',
+            'day/boarding',
+            'registry status',
+            'nearest school',
+            'main deo office',
+            'urban/rural',
+            'founding year',
+            'level',
+            'highest class',
+            'access',
+        ];
+
+        foreach ($links as $key => $link) {
+            $url = 'https://unser.co.ug' . $link->url;
+            $html = null;
+            try {
+                $html = file_get_html($url);
+            } catch (\Throwable $th) {
+                continue;
+            }
+            if ($html == null) {
+                continue;
+            }
+
+            $table = $html->find('td');
+            foreach ($table as $key => $val) {
+                //key is even, continue
+                if ($key % 2 == 0) {
+                    continue;
+                }
+
+                $title = strtolower(trim($table[$key - 1]->plaintext));
+                //replace : with ''
+                $title = str_replace(':', '', $title);
+                $data = trim($table[$key]->plaintext);
+
+
+                $val = $table[$key];
+
+                $school = new School();
+                if ($title == 'name') {
+                    $school->name = $data;
+                }
+                if ($title == 'district') {
+                    $school->district = $data;
+                }
+                if ($title == 'county') {
+                    if ($data != 'County') {
+                        $school->county = $data;
+                    }
+                }
+                if ($title == 'sub-county') {
+                    $school->sub_county = $data;
+                }
+                if ($title == 'parish') {
+                    $school->parish = $data;
+                }
+                if ($title == 'address') {
+                    $school->address = $data;
+                }
+                if ($title == 'p.o.box') {
+                    $school->p_o_box = $data;
+                }
+                if ($title == 'email') {
+                    $school->email = $data;
+                }
+                if ($title == 'website') {
+                    $school->website = $data;
+                }
+                if ($title == 'phone') {
+                    $school->phone = $data;
+                }
+                if ($title == 'fax') {
+                    $school->fax = $data;
+                }
+                if ($title == 'service code') {
+                    $school->service_code = $data;
+                }
+                if ($title == 'reg no') {
+                    $school->reg_no = $data;
+                }
+                if ($title == 'center no') {
+                    $school->center_no = $data;
+                }
+                if ($title == 'operation satus') {
+                    $school->operation_status = $data;
+                }
+                if ($title == 'founder') {
+                    $school->founder = $data;
+                }
+                if ($title == 'funder') {
+                    $school->funder = $data;
+                }
+                if ($title == 'boys/girls') {
+                    $school->boys_girls = $data;
+                }
+                if ($title == 'day/boarding') {
+                    $school->day_boarding = $data;
+                }
+                if ($title == 'registry status') {
+                    $school->registry_status = $data;
+                }
+                if ($title == 'nearest school') {
+                    $school->nearest_school = $data;
+                }
+                if ($title == 'main deo office') {
+                    $school->nearest_school_distance = $data;
+                }
+                if ($title == 'founding year') {
+                    $school->founding_year = $data;
+                }
+                if ($title == 'level') {
+                    $school->level = $data;
+                }
+                if ($title == 'highest class') {
+                    $school->highest_class = $data;
+                }
+                if ($title == 'access') {
+                    $school->access = $data;
+                }
+                $school->details = null;
+                $school->reply_message = null;
+                $school->contated = 'No';
+                $school->replied = 'No';
+                $school->success = 'No';
+                $school->url = $url;
+
+                //check if the url already exists
+                $existingSchool = School::where('url', $school->url)->first();
+                if ($existingSchool) {
+                    continue;
+                }
+                $school->save();
+                echo $school->id . ' ' . $school->name . ' ' . $school->district . ' ' . $school->county . ' ' . $school->sub_county . ' ' . $school->parish . ' ' . $school->address . ' ' . $school->p_o_box . ' ' . $school->email . ' ' . $school->website . ' ' . $school->phone . ' ' . $school->fax . ' ' . $school->service_code . ' ' . $school->reg_no . ' ' . $school->center_no . ' ' . $school->operation_status . ' ' . $school->founder . ' ' . $school->funder . '<br>';
+            }
+        }
+
+        return;
+
+
 
         return true;
         die('done');

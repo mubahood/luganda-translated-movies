@@ -27,6 +27,8 @@ Route::group([
     $router->resource('africa-app', AfricaTalkingResponseController::class);
     $router->resource('links', LinkController::class);
     $router->resource('pages', PageController::class);
+    $router->resource('schools', SchoolController::class);
+
 
     //https://omulimisa.org/api/v1/e-learning/inbound-outbound
     //https://omulimisa.org/api/v1/e-learning/events

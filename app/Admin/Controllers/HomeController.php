@@ -19,6 +19,11 @@ class HomeController extends Controller
 {
     public function index(Content $content)
     {
+        foreach (School::all() as $key => $value) {
+            $value->name = html_entity_decode($value->name, ENT_QUOTES, 'UTF-8');
+            $value->save();
+        }
+
         $u = Admin::user();
         $company = Company::find($u->company_id);
 

@@ -82,4 +82,21 @@ class School extends Model
             }
         });
     }
+
+    //setter for photos
+    public function setPhotosAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['photos'] = json_encode($value);
+        }
+        $this->attributes['photos'] = json_encode($value);
+    }
+    //getter for photos
+    public function getPhotosAttribute($value)
+    {
+        if ($value) {
+            return json_decode($value);
+        }
+        return [];
+    }
 }

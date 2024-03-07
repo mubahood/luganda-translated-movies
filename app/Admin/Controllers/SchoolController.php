@@ -55,6 +55,11 @@ class SchoolController extends AdminController
         $grid->model()->orderBy('name', 'asc');
         $grid->quickSearch('district',);
         $grid->disableBatchActions();
+        $grid->picture('image', __('Image'))->image(
+            '',
+            100,
+            100,
+        )->width(100);
 
 
         $grid->column('id', __('Id'))->sortable()->hide();
@@ -188,6 +193,12 @@ class SchoolController extends AdminController
     {
         $form = new Form(new School());
         $form->text('name', __('Name'))->rules('required');
+
+        $form->image('photo', __('Photo'))
+            ->uniqueName()
+            ->removable();
+
+
         $form->text('district', __('District'))->rules('required');
         $form->text('parish', __('Parish'))->rules('required');
         $form->email('email', __('Email'));
@@ -241,6 +252,13 @@ class SchoolController extends AdminController
             });
 
         $form->quill('details', __('Details'));
+        $form->multipleImage('photos', __('Photos'))
+            ->removable()
+            ->sortable()
+            ->uniqueName();
+
+
+
         $form->disableReset();
         $form->disableViewCheck();
 

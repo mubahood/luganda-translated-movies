@@ -13,9 +13,9 @@ class ComposerStaticInite571b9de68e7eba238339405b39e6c21
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
+        'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
-        'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         '662a729f963d39afe703c9d9b7ab4a8c' => __DIR__ . '/..' . '/symfony/polyfill-php83/bootstrap.php',
         'a1105708a18b76903365ca1c4aa61b02' => __DIR__ . '/..' . '/symfony/translation/Resources/functions.php',
@@ -23,14 +23,14 @@ class ComposerStaticInite571b9de68e7eba238339405b39e6c21
         '09f6b20656683369174dd6fa83b7e5fb' => __DIR__ . '/..' . '/symfony/polyfill-uuid/bootstrap.php',
         '47e1160838b5e5a10346ac4084b58c23' => __DIR__ . '/..' . '/laravel/prompts/src/helpers.php',
         'e39a8b23c42d4e1452234d762b03835a' => __DIR__ . '/..' . '/ramsey/uuid/src/functions.php',
-        '3bd81c9b8fcc150b69d8b63b4d2ccf23' => __DIR__ . '/..' . '/spatie/flare-client-php/src/helpers.php',
         '265b4faa2b3a9766332744949e83bf97' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Collections/helpers.php',
         'c7a3c339e7e14b60e06a2d7fcce9476b' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Events/functions.php',
         'f57d353b41eb2e234b26064d63d8c5dd' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Filesystem/functions.php',
         'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
-        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
+        '3bd81c9b8fcc150b69d8b63b4d2ccf23' => __DIR__ . '/..' . '/spatie/flare-client-php/src/helpers.php',
         '4e8671d7be9056dcd04ddd9e8e15f9cc' => __DIR__ . '/..' . '/encore/laravel-admin/src/helpers.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
@@ -133,6 +133,10 @@ class ComposerStaticInite571b9de68e7eba238339405b39e6c21
             'Laravel\\Sanctum\\' => 16,
             'Laravel\\Sail\\' => 13,
             'Laravel\\Prompts\\' => 16,
+        ),
+        'J' => 
+        array (
+            'Jxlwqq\\Quill\\' => 13,
         ),
         'I' => 
         array (
@@ -450,6 +454,10 @@ class ComposerStaticInite571b9de68e7eba238339405b39e6c21
         array (
             0 => __DIR__ . '/..' . '/laravel/prompts/src',
         ),
+        'Jxlwqq\\Quill\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jxlwqq/quill/src',
+        ),
         'Illuminate\\Support\\' => 
         array (
             0 => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Macroable',
@@ -570,6 +578,7 @@ class ComposerStaticInite571b9de68e7eba238339405b39e6c21
     );
 
     public static $classMap = array (
+        'App\\Admin\\Controllers\\AfricaTalkingResponseController' => __DIR__ . '/../..' . '/app/Admin/Controllers/AfricaTalkingResponseController.php',
         'App\\Admin\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Admin/Controllers/AuthController.php',
         'App\\Admin\\Controllers\\CompanyController' => __DIR__ . '/../..' . '/app/Admin/Controllers/CompanyController.php',
         'App\\Admin\\Controllers\\CompanyEditController' => __DIR__ . '/../..' . '/app/Admin/Controllers/CompanyEditController.php',
@@ -577,6 +586,11 @@ class ComposerStaticInite571b9de68e7eba238339405b39e6c21
         'App\\Admin\\Controllers\\ExampleController' => __DIR__ . '/../..' . '/app/Admin/Controllers/ExampleController.php',
         'App\\Admin\\Controllers\\FinancialPeriodController' => __DIR__ . '/../..' . '/app/Admin/Controllers/FinancialPeriodController.php',
         'App\\Admin\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Admin/Controllers/HomeController.php',
+        'App\\Admin\\Controllers\\LinkController' => __DIR__ . '/../..' . '/app/Admin/Controllers/LinkController.php',
+        'App\\Admin\\Controllers\\MovieModelController' => __DIR__ . '/../..' . '/app/Admin/Controllers/MovieModelController.php',
+        'App\\Admin\\Controllers\\PageController' => __DIR__ . '/../..' . '/app/Admin/Controllers/PageController.php',
+        'App\\Admin\\Controllers\\SchoolController' => __DIR__ . '/../..' . '/app/Admin/Controllers/SchoolController.php',
+        'App\\Admin\\Controllers\\ScraperModelController' => __DIR__ . '/../..' . '/app/Admin/Controllers/ScraperModelController.php',
         'App\\Admin\\Controllers\\StockCategoryController' => __DIR__ . '/../..' . '/app/Admin/Controllers/StockCategoryController.php',
         'App\\Admin\\Controllers\\StockItemController' => __DIR__ . '/../..' . '/app/Admin/Controllers/StockItemController.php',
         'App\\Admin\\Controllers\\StockRecordController' => __DIR__ . '/../..' . '/app/Admin/Controllers/StockRecordController.php',
@@ -595,8 +609,14 @@ class ComposerStaticInite571b9de68e7eba238339405b39e6c21
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\ValidateSignature' => __DIR__ . '/../..' . '/app/Http/Middleware/ValidateSignature.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Models\\AfricaTalkingResponse' => __DIR__ . '/../..' . '/app/Models/AfricaTalkingResponse.php',
         'App\\Models\\Company' => __DIR__ . '/../..' . '/app/Models/Company.php',
         'App\\Models\\FinancialPeriod' => __DIR__ . '/../..' . '/app/Models/FinancialPeriod.php',
+        'App\\Models\\Link' => __DIR__ . '/../..' . '/app/Models/Link.php',
+        'App\\Models\\MovieModel' => __DIR__ . '/../..' . '/app/Models/MovieModel.php',
+        'App\\Models\\Page' => __DIR__ . '/../..' . '/app/Models/Page.php',
+        'App\\Models\\School' => __DIR__ . '/../..' . '/app/Models/School.php',
+        'App\\Models\\ScraperModel' => __DIR__ . '/../..' . '/app/Models/ScraperModel.php',
         'App\\Models\\StockCategory' => __DIR__ . '/../..' . '/app/Models/StockCategory.php',
         'App\\Models\\StockItem' => __DIR__ . '/../..' . '/app/Models/StockItem.php',
         'App\\Models\\StockRecord' => __DIR__ . '/../..' . '/app/Models/StockRecord.php',
@@ -3474,6 +3494,9 @@ class ComposerStaticInite571b9de68e7eba238339405b39e6c21
         'Illuminate\\View\\ViewFinderInterface' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/View/ViewFinderInterface.php',
         'Illuminate\\View\\ViewName' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/View/ViewName.php',
         'Illuminate\\View\\ViewServiceProvider' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/View/ViewServiceProvider.php',
+        'Jxlwqq\\Quill\\Editor' => __DIR__ . '/..' . '/jxlwqq/quill/src/Editor.php',
+        'Jxlwqq\\Quill\\Quill' => __DIR__ . '/..' . '/jxlwqq/quill/src/Quill.php',
+        'Jxlwqq\\Quill\\QuillServiceProvider' => __DIR__ . '/..' . '/jxlwqq/quill/src/QuillServiceProvider.php',
         'Laravel\\Prompts\\Concerns\\Colors' => __DIR__ . '/..' . '/laravel/prompts/src/Concerns/Colors.php',
         'Laravel\\Prompts\\Concerns\\Cursor' => __DIR__ . '/..' . '/laravel/prompts/src/Concerns/Cursor.php',
         'Laravel\\Prompts\\Concerns\\Erase' => __DIR__ . '/..' . '/laravel/prompts/src/Concerns/Erase.php',

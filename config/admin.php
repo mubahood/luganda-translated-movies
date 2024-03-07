@@ -180,7 +180,7 @@ return [
         // User tables and model.
         'users_table' => 'admin_users',
         //'users_model' => Encore\Admin\Auth\Database\Administrator::class,
-        'users_model' => User::class, 
+        'users_model' => User::class,
 
         // Role table and model.
         'roles_table' => 'admin_roles',
@@ -406,6 +406,44 @@ return [
     |
     */
     'extensions' => [
+        'quill' => [
+            // If the value is set to false, this extension will be disabled
+            'enable' => true,
+            'config' => [
+                'modules' => [
+                    'syntax' => true,
+                    'toolbar' =>
+                    [
+                        ['size' => []],
+                        ['header' => []],
+                        'bold',
+                        'italic',
+                        'underline',
+                        'strike',
+                        ['script' => 'super'],
+                        ['script' => 'sub'],
+                        ['color' => []],
+                        ['background' => []],
+                        'blockquote',
+                        'code-block',
+                        ['list' => 'ordered'],
+                        ['list' => 'bullet'],
+                        ['indent' => '-1'],
+                        ['indent' => '+1'],
+                        'direction',
+                        ['align' => []],
+                        'link',
+                        'image',
+                        'video',
+                        'formula',
+                        'clean'
+                    ],
+                    "htmlEditButton" => ["syntax" => true, "debug" => true]
+                ],
+                'theme' => 'snow',
+                'height' => '200px',
+            ]
+        ],
         'grid-lightbox' => [
             'enable' => true,
         ]

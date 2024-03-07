@@ -54,22 +54,26 @@ class SchoolController extends AdminController
         $grid = new Grid(new School());
         $grid->model()->orderBy('name', 'asc');
         $grid->quickSearch('district',);
+        $grid->disableBatchActions();
 
-        $grid->column('id', __('Id'))->sortable();
+
+        $grid->column('id', __('Id'))->sortable()->hide();
         $grid->column('created_at', __('Created at'))->hide();
         $grid->column('updated_at', __('Updated at'))->hide();
-        $grid->column('name', __('Name'))->sortable();
-        $grid->column('district', __('District'))->sortable();
-        $grid->column('county', __('County'))->sortable();
+        $grid->column('name', __('Name'))->sortable()
+            ->filter('like')
+            ->width(250);
+        $grid->column('district', __('District'))->sortable()->hide();
         $grid->column('sub_county', __('Sub county'))->hide();
-        $grid->column('parish', __('Parish'))->sortable();
+        $grid->column('parish', __('Parish'))->sortable()
+            ->filter('like');
         $grid->column('address', __('Address'))->hide();
         $grid->column('p_o_box', __('P o box'))->hide();
         $grid->column('email', __('Email'))->sortable()->editable();
         $grid->column('website', __('Website'))->sortable()->editable();
         $grid->column('phone', __('Phone'))->sortable()->editable();
         $grid->column('fax', __('Fax'))->hide();
-        $grid->column('school_type', __('School Type'))
+        $grid->column('level', __('School Level'))
             ->label([
                 'Nursery' => 'info',
                 'Primary' => 'info',
@@ -86,27 +90,36 @@ class SchoolController extends AdminController
             ])
             ->sortable();
         $grid->column('reg_no', __('Reg no'))->hide();
-        $grid->column('operation_status', __('Operation status'))->sortable();
+        $grid->column('operation_status', __('Operation status'))->sortable()->hide();
         $grid->column('founder', __('Founder'))->hide();
         $grid->column('funder', __('Funder'))->hide();
-        $grid->column('boys_girls', __('Boys girls'))->sortable();
+        $grid->column('boys_girls', __('Boys girls'))->sortable()->hide();
         $grid->column('day_boarding', __('Day boarding'))->hide();
         $grid->column('registry_status', __('Registry status'))->hide();
         $grid->column('nearest_school', __('Nearest school'))->hide();
         $grid->column('nearest_school_distance', __('Nearest school distance'))->hide();
         $grid->column('founding_year', __('Founding year'))->sortable();
-        $grid->column('level', __('Level'))->hide();
+
         $grid->column('latitude', __('Latitude'))->hide();
-        $grid->column('longitude', __('Longitude'));
+        $grid->column('longitude', __('Longitude'))->hide();
         $grid->column('highest_class', __('Highest class'))->hide();
         $grid->column('access', __('Access'))->hide();
         $grid->column('details', __('Details'))->hide();
-        $grid->column('has_email', __('Has email'))->sortable();
-        $grid->column('has_website', __('Has website'))->hide();
-        $grid->column('has_phone', __('Has phone'))->sortable();
+        $grid->column('has_email', __('Has email'))->sortable()->filter([
+            'Yes' => 'Yes',
+            'No' => 'No',
+        ])->hide();
+        $grid->column('has_website', __('Has website'))->hide()->filter([
+            'Yes' => 'Yes',
+            'No' => 'No',
+        ])->hide();
+        $grid->column('has_phone', __('Has phone'))->sortable()->filter([
+            'Yes' => 'Yes',
+            'No' => 'No',
+        ])->hide();
         $grid->column('contated', __('Contated'))->sortable();
         $grid->column('replied', __('Replied'))->sortable();
-        $grid->column('success', __('Success'));
+        $grid->column('success', __('Success'))->sortable();
         $grid->column('reply_message', __('Reply message'))->hide();
         $grid->column('url', __('Url'))->hide();
 
@@ -176,45 +189,64 @@ class SchoolController extends AdminController
     protected function form()
     {
         $form = new Form(new School());
+        $form->text('name', __('Name'))->rules('required');
+        $form->text('district', __('District'))->rules('required');
+        $form->text('parish', __('Parish'))->rules('required');
+        $form->email('email', __('Email'));
 
-        $form->textarea('name', __('Name'));
-        $form->textarea('district', __('District'));
-        $form->textarea('county', __('County'));
-        $form->textarea('sub_county', __('Sub county'));
-        $form->textarea('parish', __('Parish'));
-        $form->textarea('address', __('Address'));
-        $form->textarea('p_o_box', __('P o box'));
-        $form->textarea('email', __('Email'));
-        $form->textarea('website', __('Website'));
-        $form->textarea('phone', __('Phone'));
-        $form->textarea('fax', __('Fax'));
-        $form->textarea('school_type', __('School type'));
-        $form->textarea('service_code', __('Service code'));
-        $form->textarea('reg_no', __('Reg no'));
-        $form->textarea('center_no', __('Center no'));
-        $form->textarea('operation_status', __('Operation status'));
-        $form->textarea('founder', __('Founder'));
-        $form->textarea('funder', __('Funder'));
-        $form->textarea('boys_girls', __('Boys girls'));
-        $form->textarea('day_boarding', __('Day boarding'));
-        $form->textarea('registry_status', __('Registry status'));
-        $form->textarea('nearest_school', __('Nearest school'));
-        $form->textarea('nearest_school_distance', __('Nearest school distance'));
-        $form->number('founding_year', __('Founding year'));
-        $form->text('level', __('Level'));
-        $form->textarea('latitude', __('Latitude'));
-        $form->textarea('longitude', __('Longitude'));
-        $form->textarea('highest_class', __('Highest class'));
-        $form->textarea('access', __('Access'));
-        $form->textarea('details', __('Details'));
-        $form->text('has_email', __('Has email'));
-        $form->text('has_website', __('Has website'));
-        $form->text('has_phone', __('Has phone'));
-        $form->text('contated', __('Contated'))->default('No');
-        $form->text('replied', __('Replied'))->default('No');
-        $form->text('success', __('Success'))->default('No');
-        $form->text('reply_message', __('Reply message'));
-        $form->textarea('url', __('Url'));
+
+        $form->radio('level', __('School Level'))
+            ->options(['Nursery' => 'Nursery', 'Primary' => 'Primary', 'Secondary' => 'Secondary', 'Tertiary' => 'Tertiary', 'University' => 'University'])
+            ->default('Secondary')
+            ->rules('required');
+
+
+
+        $form->radioCard('has_website', __('Advanced'))
+            ->options(['Yes' => 'Yes', 'No' => 'No'])
+            ->default('No')
+            ->when('Yes', function (Form $form) {
+                $form->radio('operation_status', __('Operation Status'))
+                    ->options(['Open' => 'Open', 'Closed' => 'Closed'])
+                    ->default('Open');
+                $form->radio('boys_girls', __('Boys or Girls'))
+                    ->options([
+                        'Boys' => 'Boys',
+                        'Girls' => 'Girls',
+                        'Mixed' => 'Mixed',
+                    ]);
+                $form->text('reg_no', __('School Reg no'));
+                $form->text('center_no', __('School Center no'));
+                $form->text('address', __('School Address'));
+                $form->text('p_o_box', __('P o box'));
+                $form->text('phone', __('School Phone Number'));
+                $form->text('website', __('Website'))->rules('required');
+                $form->text('founder', __('Founder'));
+                $form->radio('funder', __('Funder'))
+                    ->options([
+                        'Government' => 'Government',
+                        'Private' => 'Private',
+                        'Religious' => 'Religious',
+                        'Community' => 'Community',
+                        'NGO' => 'NGO',
+                        'Other' => 'Other',
+                    ]);
+                $form->text('day_boarding', __('Day boarding'));
+                $form->decimal('founding_year', __('Founding year'));
+                $form->text('latitude', __('GPS Latitude'));
+                $form->text('longitude', __('GPS Longitude'));
+                $form->text('highest_class', __('Highest class'));
+                $form->text('contated', __('Contated'))->default('No');
+                $form->text('replied', __('Replied'))->default('No');
+                $form->text('success', __('Success'))->default('No');
+                $form->text('reply_message', __('Reply message'));
+            });
+
+        $form->quill('details', __('Details'));
+        $form->disableReset();
+        $form->disableViewCheck();
+
+
 
         return $form;
     }

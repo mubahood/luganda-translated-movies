@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '2ccb15dda0623e79ebab0d6430e9dbb5e054e564',
+        'reference' => '78c889d969261d3e1d5251a635f14803d4cce9cc',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -409,6 +409,15 @@
                 0 => 'v10.41.0',
             ),
         ),
+        'jxlwqq/quill' => array(
+            'pretty_version' => '1.0.4',
+            'version' => '1.0.4.0',
+            'reference' => 'be5ab91840f25dfee4db0ea5c408943930912645',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../jxlwqq/quill',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'kodova/hamcrest-php' => array(
             'dev_requirement' => true,
             'replaced' => array(
@@ -436,7 +445,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '2ccb15dda0623e79ebab0d6430e9dbb5e054e564',
+            'reference' => '78c889d969261d3e1d5251a635f14803d4cce9cc',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

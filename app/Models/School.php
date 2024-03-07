@@ -46,7 +46,9 @@ class School extends Model
 
         static::updating(function ($school) {
             //check if the url already exists
-            $existingSchool = School::where('url', $school->url)->first();
+            $existingSchool = School::where('url', $school->url)
+                ->where('id', '!=', $school->id)
+                ->first();
             if ($existingSchool) {
                 return false;
             } 

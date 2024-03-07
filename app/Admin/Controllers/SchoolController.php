@@ -24,6 +24,33 @@ class SchoolController extends AdminController
      */
     protected function grid()
     {
+
+        /* $schools = School::where(
+            'fax',
+            '!=',
+            'NO',
+        )
+            ->limit(20000)
+            ->get();
+        foreach ($schools as $school) {
+            //get duplicate schools for url
+            $dups = School::where('url', $school->url)
+                ->where('id', '!=', $school->id)
+                ->get();
+            if ($dups->count() > 0) {
+                $count = 0;
+                foreach ($dups as $dup) {
+                    $count++;
+                    $dup->delete();
+                } 
+                echo("Deleted " . $count . " duplicates for " . $school->name . " " . $school->id . " <br>"); 
+            }
+            $school->fax = 'NO';
+            $school->save();
+            echo("Doe with " . $school->name . " " . $school->id. " <br>");
+        }
+        die('Done'); */
+
         $grid = new Grid(new School());
         $grid->model()->orderBy('name', 'asc');
         $grid->quickSearch('district',);

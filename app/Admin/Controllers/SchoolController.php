@@ -95,7 +95,6 @@ class SchoolController extends AdminController
         $grid->column('funder', __('Funder'))->hide();
         $grid->column('boys_girls', __('Boys girls'))->sortable()->hide();
         $grid->column('day_boarding', __('Day boarding'))->hide();
-        $grid->column('registry_status', __('Registry status'))->hide();
         $grid->column('nearest_school', __('Nearest school'))->hide();
         $grid->column('nearest_school_distance', __('Nearest school distance'))->hide();
         $grid->column('founding_year', __('Founding year'))->sortable();
@@ -159,7 +158,6 @@ class SchoolController extends AdminController
         $show->field('funder', __('Funder'));
         $show->field('boys_girls', __('Boys girls'));
         $show->field('day_boarding', __('Day boarding'));
-        $show->field('registry_status', __('Registry status'));
         $show->field('nearest_school', __('Nearest school'));
         $show->field('nearest_school_distance', __('Nearest school distance'));
         $show->field('founding_year', __('Founding year'));

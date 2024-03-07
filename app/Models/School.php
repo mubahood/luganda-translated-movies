@@ -19,14 +19,14 @@ class School extends Model
             $existingSchool = School::where('url', $school->url)->first();
             if ($existingSchool) {
                 return false;
-            } 
+            }
             //check if email is valid and se has_email 
             if (filter_var($school->email, FILTER_VALIDATE_EMAIL)) {
                 $school->has_email = 'Yes';
             } else {
                 $school->email = null;
                 $school->has_email = 'No';
-            } 
+            }
             //check if website is valid and se has_website
             if (filter_var($school->website, FILTER_VALIDATE_URL)) {
                 $school->has_website = 'Yes';
@@ -41,7 +41,7 @@ class School extends Model
             } else {
                 $school->phone = null;
                 $school->has_phone = 'No';
-            } 
+            }
         });
 
         static::updating(function ($school) {
@@ -51,21 +51,21 @@ class School extends Model
                 ->first();
             if ($existingSchool) {
                 return false;
-            } 
+            }
             //check if email is valid and se has_email 
             if (filter_var($school->email, FILTER_VALIDATE_EMAIL)) {
                 $school->has_email = 'Yes';
             } else {
                 $school->email = null;
                 $school->has_email = 'No';
-            } 
+            }
             //check if website is valid and se has_website
-            if (filter_var($school->website, FILTER_VALIDATE_URL)) {
+            /* if (filter_var($school->website, FILTER_VALIDATE_URL)) {
                 $school->has_website = 'Yes';
             } else {
                 $school->website = null;
                 $school->has_website = 'No';
-            }
+            } */
 
             //check if has_phone has digits
             if (preg_match('/[0-9]/', $school->phone)) {
@@ -73,7 +73,13 @@ class School extends Model
             } else {
                 $school->phone = null;
                 $school->has_phone = 'No';
-            } 
+            }
+            //if details is more than 50 characters
+            if (strlen($school->details) > 50) {
+                $school->registry_status = 'Yes';
+            } else {
+                $school->registry_status = 'No';
+            }
         });
-    } 
+    }
 }

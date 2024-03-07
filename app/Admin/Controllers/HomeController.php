@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\MovieModel;
+use App\Models\School;
 use App\Models\StockRecord;
 use App\Models\User;
 use Encore\Admin\Controllers\Dashboard;
@@ -39,7 +40,16 @@ class HomeController extends Controller
             ->description('Now Downloading ' . $now_text)
             ->row(function (Row $row) {
                 $row->column(3, function (Column $column) {
-                    $count = MovieModel::count();
+                    $count = number_format(School::count());
+                    $with_email = number_format(School::where('registry_status', 'Yes')->count());
+                    $box = new Box('Schools ('.$with_email.')', '<h3 style="text-align:right; margin: 0; font-size: 40px; font-weight: 800" >' . $count . '</h3>');
+                    $box->style('danger')
+                        ->solid();
+                    $column->append($box);
+                });
+                $row->column(3, function (Column $column) {
+                    
+                    $count = number_format(MovieModel::count());
                     $box = new Box('Movies', '<h3 style="text-align:right; margin: 0; font-size: 40px; font-weight: 800" >' . $count . '</h3>');
                     $box->style('danger')
                         ->solid();

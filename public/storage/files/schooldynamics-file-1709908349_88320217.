@@ -1,0 +1,33 @@
+HTTP/1.1 302 Found
+Date: Fri, 08 Mar 2024 14:32:29 GMT
+Server: Apache
+Set-Cookie: __wpdm_client=94dc94e2c93f56ff37ea955546753c08; path=/; secure; HttpOnly
+location: https://docs.google.com/document/d/12e9XAx9Z_EwUVA0Tx1GeyfqjQ--ya8T_/edit?usp=share_link&ouid=112007210424013242686&rtpof=true&sd=true
+X-Endurance-Cache-Level: 0
+X-nginx-cache: WordPress
+Content-Length: 0
+Content-Type: text/html; charset=UTF-8
+
+HTTP/2 410 
+cache-control: no-cache, no-store, max-age=0, must-revalidate
+pragma: no-cache
+expires: Mon, 01 Jan 1990 00:00:00 GMT
+date: Fri, 08 Mar 2024 14:32:31 GMT
+content-type: text/html; charset=utf-8
+x-chromium-appcache-fallback-override: disallow-fallback
+p3p: CP="This is not a P3P policy! See g.co/p3phelp for more info."
+strict-transport-security: max-age=31536000; includeSubDomains
+content-security-policy: require-trusted-types-for 'script';report-uri https://csp.withgoogle.com/csp/docs-tt
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-xss-protection: 1; mode=block
+server: GSE
+set-cookie: NID=512=geKkQcUjOq8dllkRx-FjFdD9psNRabaGsgD37DGxw3zgVSkfbQFPU141JuGlKVQ2aZM-eA2s4ZHOFj2uCpaejx2OEwiQH_8Pf0jZ_2cuC0S0pD-9POtISqjZs522qQv-7XkJ721V_yHSoXu3Y8EOfo-CeXVpnbXmfSAKpolrE20; expires=Sat, 07-Sep-2024 14:32:31 GMT; path=/; domain=.google.com; HttpOnly
+set-cookie: COMPASS=documents=CmIACWuJV0qDY7eKYRCInGnczneTOZymuUOGie_QzHQt1QT2rccXEbRggG4Ao5lBCvrW04z-MBT04XSGfer53blrSXx51-ywq4F8gxfXvqqxrthZMAwBIra8XAq16wagF0NW3BCP36yvBhpzAAlriVdrLa9Swkxk_AxclsFDdh8YmtdHBEvfZ59JbhTztKfDOiUPhWaY5HJOMCyIqOqAgRJoml4Wvft-3MTvQxw14RDXbBdYmV-lnuqFmEeFuqUAcHKbK3D3Jasu7ZJlLNqdEuzBNtooGmdR8AOI8n_tiQ==; Domain=.docs.google.com; Expires=Fri, 08-Mar-2024 15:32:31 GMT; Path=/document/d/12e9XAx9Z_EwUVA0Tx1GeyfqjQ--ya8T_; Secure; HttpOnly; SameSite=none
+set-cookie: GFE_RTT=344; Domain=.docs.google.com; Expires=Fri, 08-Mar-2024 14:37:31 GMT; Path=/; Secure; Priority=LOW; SameSite=strict
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+accept-ranges: none
+vary: Accept-Encoding
+x-l2-request-path: l2-managed-5
+
+<!DOCTYPE html><html lang="en"><head><meta name="description" content="Web word processing, spreadsheets and presentations"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0"><link rel="shortcut icon" href="//docs.google.com/favicon.ico"><title>Page not found</title><meta name="referrer" content="origin"><link href="//fonts.googleapis.com/css?family=Product+Sans" rel="stylesheet" type="text/css" nonce="asKY4J-ZZ_k6wvbAAn0PJg"><style nonce="asKY4J-ZZ_k6wvbAAn0PJg">.goog-inline-block{position:relative;display:-moz-inline-box;display:inline-block}* html .goog-inline-block{display:inline}*:first-child+html .goog-inline-block{display:inline}#drive-logo{margin:18px 0;position:absolute;white-space:nowrap}.docs-drivelogo-img{background-image:url(//ssl.gstatic.com/images/branding/googlelogo/1x/googlelogo_color_116x41dp.png);-webkit-background-size:116px 41px;background-size:116px 41px;display:inline-block;height:41px;vertical-align:bottom;width:116px}.docs-drivelogo-text{color:#000;display:inline-block;opacity:.54;text-decoration:none;font-family:"Product Sans",Arial,Helvetica,sans-serif;font-size:32px;text-rendering:optimizeLegibility;position:relative;top:-6px;left:-7px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}@media (-webkit-min-device-pixel-ratio:1.5),(min-resolution:144dpi){.docs-drivelogo-img{background-image:url(//ssl.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_116x41dp.png)}}sentinel{}</style><style type="text/css" nonce="asKY4J-ZZ_k6wvbAAn0PJg">body {background-color: #fff; font-family: Arial,sans-serif; font-size: 13px; margin: 0; padding: 0;}a, a:link, a:visited {color: #112ABB;}</style><style type="text/css" nonce="asKY4J-ZZ_k6wvbAAn0PJg">.errorMessage {font-size: 12pt; font-weight: bold; line-height: 150%;}</style></head><body><div id="outerContainer"><div id="innerContainer"><div style="position: absolute; top: -80px;"><div style="margin: 18px 0; position: absolute; white-space: nowrap;"><a href="//support.google.com/docs/"><img height="35px" src="//ssl.gstatic.com/docs/common/product/docs_lockup2.png" alt="Google logo"/></a></div></div><div align="center"><p class="errorMessage" style="padding-top: 50px">Sorry, the file that you've requested has been deleted.</p><p>Make sure that you have the correct URL and that the owner of the file hasn't deleted it.</p><div style="background: #F0F6FF; border: 1px solid black; margin-top: 35px; padding: 10px 125px; width: 300px;"><p><strong>Get stuff done with Google Drive</strong></p><p>Apps in Google Drive make it easy to create, store and share online documents, spreadsheets, presentations and more.</p><p>Learn more at <a href="https://drive.google.com/start/apps">drive.google.com/start/apps</a>.</p></div></div></div></div></body><style nonce="asKY4J-ZZ_k6wvbAAn0PJg">html {height: 100%; overflow: auto;}body {height: 100%; overflow: auto;}#outerContainer {margin: auto; max-width: 750px;}#innerContainer {margin-bottom: 20px; margin-left: 40px; margin-right: 40px; margin-top: 80px; position: relative;}</style></html>

@@ -28,6 +28,7 @@ Route::group([
     $router->resource('links', LinkController::class);
     $router->resource('pages', PageController::class);
     $router->resource('schools', SchoolController::class);
+    $router->resource('learning-materials-categories', LearningMaterialCategoryController::class);
 
 
     //https://omulimisa.org/api/v1/e-learning/inbound-outbound

@@ -36,8 +36,403 @@ class Utils
         // self::get_school_links(3); //Secondary schools
         // self::get_school_links(4); //Tertiary schools
         // self::get_school_links(5); //University schools
-        self::get_school_profiles(); //profiles
+        //self::get_school_profiles(); //profiles
+
+        //self::get_past_paper_cats();
+        self::get_past_paper_pages();
+        die('-done-');
         return 'Done';
+    }
+
+    public static function download_sharability_posts(){
+        //get last 100 links of type SHAREBILITY_POST
+        $links = Link::where('type', 'SHAREBILITY_RESOURCE')->limit(100)->get();
+        foreach ($links as $key => $link) {
+            $html = null;
+            try {
+                $html = file_get_html($link->url);
+            } catch (\Throwable $th) {
+                continue;
+            }
+            if ($html == null) {
+                continue;
+            }
+            $title = $html->find('title', 0);
+            if ($title == null) {
+                continue;
+            }
+            $title = $title->plaintext; 
+            $title = str_replace('| Sharebility Uganda', '', $title);
+            $title = str_replace('Sharebility Uganda', '', $title);
+            $title = str_replace('Resources', '', $title);
+            $title = str_replace('| Sharebility', '', $title);
+            $title = str_replace('Sharebility', '', $title);
+            $title = trim($title);
+            
+            $post = new LearningMaterialPost();
+            $post->title = $title;
+            $post->learning_material_category_id = $link->learning_material_category_id;
+
+            //slug
+            $slug = explode('/', $link->url);
+            if (count($slug) < 2) {
+                continue;
+            }
+            $slug = $slug[count($slug) - 2];
+            if ($slug == null) {
+                throw new \Exception('Slug not found');
+            }
+
+            //external_url if already exists
+            if (LearningMaterialPost::where('external_url', $link->url)->exists()) {
+                continue;
+            } 
+
+            //check if external_id exists
+            if (LearningMaterialPost::where('external_id', $slug)->exists()) {
+                continue;
+            } 
+
+            $post->external_id = $slug;
+            $post->slug = $slug;
+
+            //get description
+            $description = $html->find('meta[name=description]', 0);
+            if ($description == null) {
+                $description = $html->find('meta[name=twitter:description]', 0);
+            }
+            //if $description is null try twitter:description
+            if ($description == null) {
+                $description = $html->find('meta[name=twitter:description]', 0);
+            }
+            if ($description != null) {
+                $post->short_description = $description->content;
+                $post->description = $description->content;
+            }
+            //replace Sharebility with Schooldynamics
+            $post->description = str_replace('Sharebility', 'Schooldynamics', $post->description);
+            $post->short_description = str_replace('Sharebility', 'Schooldynamics', $post->short_description);
+
+            // a in .wpdm-button-area
+            $a = $html->find('.wpdm-button-area a', 0);
+            dd($a->href); 
+            
+
+            dd($link);
+
+/* 
+
+            $table->text('short_description')->nullable();
+            $table->text('description')->nullable();
+            $table->text('image')->nullable();
+            $table->text('slug')->nullable();
+            $table->text('external_url')->nullable();
+            $table->text('external_download_url')->nullable();
+            $table->text('download_url')->nullable();
+*/            
+            dd($title);
+
+            $link->save();
+            echo $link->id . ' ' . $link->title . ' ' . $link->url . '<br>';
+        } 
+    }
+    public static function get_past_paper_pages()
+    {
+        foreach (LearningMaterialCategory::where([])->get() as $key => $cat) {
+            //check if last_visit is not null
+            if ($cat->last_visit != null) {
+                $last_visit = Carbon::parse($cat->last_visit);
+                //if last_visit is less than 1 day ago return
+                if ($last_visit->addDays(1)->greaterThan(Carbon::now())) {
+                    continue;
+                }
+            }
+            $external_url = $cat->external_url;
+
+            //check if $external_url has / at the end and add if not
+            if (substr($external_url, -1) != '/') {
+                $external_url .= '/';
+            }
+
+            $page = Page::where('url', $cat->external_url)->first();
+            if ($page != null) {
+                //last_visit is not null
+                if ($page->last_visit != null) {
+                    $last_visit = Carbon::parse($page->last_visit);
+                    //if last_visit is less than 1 day ago return
+                    if ($last_visit->addDays(1)->greaterThan(Carbon::now())) {
+                        continue;
+                    }
+                }
+            }
+
+
+
+            $page = Page::where('url', $cat->external_url)->first();
+            if ($page == null) {
+                $page = new Page();
+                $page->url = $cat->external_url;
+                $page->title = 'SHAREBILITY_CATEGORY';
+                $page->category_id = $cat->id;
+                $page->type = 'SHAREBILITY_CATEGORY';
+                $page->last_visit = null;
+                $page->save();
+            }
+            $due_page = Page::find($page->id);
+
+            //check if there is no Page with this url
+            $html = null;
+            try {
+                $html = file_get_html($cat->external_url);
+            } catch (\Throwable $th) {
+                continue;
+            }
+            if ($html == null) {
+                continue;
+            }
+
+            //get class error-404-text
+            $pages = $html->find('a');
+            if ($pages != null) {
+                foreach ($pages as $key => $a) {
+                    if (!str_contains($a->href, '-category')) {
+                        continue;
+                    }
+                    //last segment as slug
+                    $slug = explode('/', $a->href);
+                    if (count($slug) < 2) {
+                        continue;
+                    }
+                    $slug = $slug[count($slug) - 2];
+                    if ($slug == null) {
+                        throw new \Exception('Slug not found');
+                    }
+                    //check if there is no Page with this url
+                    $page = Page::where('url', $a->href)->first();
+                    if ($page != null) {
+                        continue;
+                    }
+                    //if not contain /page/ skip
+                    if (!str_contains(strtolower($a->href), '/page/')) {
+                        continue;
+                    }
+
+                    $page = new Page();
+                    $page->url = $a->href;
+                    $page->title = 'SHAREBILITY_CATEGORY';
+                    $page->category_id = $cat->id;
+                    $page->type = 'SHAREBILITY_CATEGORY';
+                    $page->last_visit = null;
+                    $page->save();
+                }
+            }
+            $cat_pages = Page::where('category_id', $cat->id)->get();
+            foreach ($cat_pages as $key => $val) {
+                $html = null;
+                try {
+                    $html = file_get_html($val->url);
+                } catch (\Throwable $th) {
+                    continue;
+                }
+                if ($html == null) {
+                    continue;
+                }
+                $links = $html->find('a');
+
+                foreach ($links as $key => $a) {
+                    if (!str_contains($a->href, '/download/')) {
+                        continue;
+                    }
+                    //last segment as slug
+                    $slug = explode('/', $a->href);
+                    if (count($slug) < 2) {
+                        continue;
+                    }
+                    $slug = $slug[count($slug) - 2];
+                    if ($slug == null) {
+                        throw new \Exception('Slug not found');
+                    }
+                    //tolower
+                    $slug = strtolower($slug);
+                    //check if there is no Link with this url
+                    $link = Link::where('external_id', $slug)->first();
+                    if ($link != null) {
+                        continue;
+                    }
+                    //check if there is no Link with this url
+                    $link = Link::where('url', $a->href)->first();
+                    if ($link != null) {
+                        continue;
+                    }
+
+                    $link = new Link();
+                    $link->title = trim($a->plaintext);
+                    $link->url = $a->href;
+                    $link->external_id = $slug;
+                    $link->type = 'SHAREBILITY_RESOURCE';
+                    $link->processed = 'NO';
+                    $link->success = 'NO';
+                    $link->error = null;
+                    $link->school_type = $cat->id;
+                    $link->thumbnail = $val->id;
+                    $link->save();
+                }
+            }
+
+            $due_page->last_visit = Carbon::now();
+            $due_page->save();
+            echo('<hr>done with ' . $due_page->url);
+            //$page->save();
+
+
+            $html = null;
+
+            //pages 
+
+            try {
+                $html = file_get_html($external_url);
+            } catch (\Throwable $th) {
+                continue;
+            }
+            if ($html == null) {
+                continue;
+            }
+            die($external_url);
+            dd($html);
+            $links = $html->find('a');
+        }
+    }
+    public static function get_past_paper_cats()
+    {
+        $cats_page = Page::where('title', 'SHAREBILITY_CATEGORIES')->first();
+        if ($cats_page == null) {
+            $cats_page = new Page();
+            $cats_page->title = 'SHAREBILITY_CATEGORIES';
+            $cats_page->url = 'https://sharebility.net/';
+            $cats_page->last_visit = Carbon::now();
+            $cats_page->save();
+        }
+
+        $last_visit = Carbon::parse($cats_page->last_visit);
+        $links = Link::where('type', 'SHAREBILITY_RESOURCE')->get();
+
+        if ($links->count() > 0) {
+            if ($last_visit->addDays(1)->greaterThan(Carbon::now())) {
+                return;
+            }
+        }
+        $cats_page->url = 'https://sharebility.net/';
+        $html = null;
+        try {
+            $html = file_get_html($cats_page->url);
+        } catch (\Throwable $th) {
+            dd($th->getMessage());
+        }
+        if ($html == null) {
+            dd('html not found');
+        }
+
+        //find elementor-widget-container class
+        $cats = $html->find('a');
+        if ($cats == null) {
+            dd('elementor-widget-container not found');
+        }
+        foreach ($cats as $key => $a) {
+            //if not contains -category skip
+            if (!str_contains($a->href, '-category')) {
+                continue;
+            }
+
+            //last segment as slug
+            $slug = explode('/', $a->href);
+            if (count($slug) < 2) {
+                continue;
+            }
+            $slug = $slug[count($slug) - 2];
+            if ($slug == null) {
+                throw new \Exception('Slug not found');
+            }
+            //tolower
+            $slug = strtolower($slug);
+            //check if there is no Link with this url
+            $cat = LearningMaterialCategory::where('external_id', $slug)->first();
+            if ($cat != null) {
+                continue;
+            }
+
+            $cat = LearningMaterialCategory::where('external_url', $a->href)->first();
+            if ($cat != null) {
+                continue;
+            }
+            //category html
+            $cat_html = null;
+            try {
+                $cat_html = file_get_html($a->href);
+            } catch (\Throwable $th) {
+                continue;
+            }
+            if ($cat_html == null) {
+                continue;
+            }
+
+            //get title
+            $title = $cat_html->find('title', 0);
+            if ($title == null) {
+                $title = $cat_html->find('h1', 0);
+            }
+            $name = $title->plaintext;
+            //remove Resources | Sharebility Uganda
+            $name = str_replace('Resources | Sharebility Uganda', '', $name);
+            $name = str_replace('Sharebility Uganda', '', $name);
+            $name = str_replace('Resources', '', $name);
+            $name = str_replace('| Sharebility', '', $name);
+            $name = str_replace('Sharebility', '', $name);
+            $name = trim($name);
+            $newCat = new LearningMaterialCategory();
+            $newCat->name = $name;
+            //get description
+            $description = $cat_html->find('meta[name=description]', 0);
+            if ($description == null) {
+                $description = $cat_html->find('meta[name=twitter:description]', 0);
+            }
+            //if $description is null try twitter:description
+            if ($description == null) {
+                $description = $cat_html->find('meta[name=twitter:description]', 0);
+            }
+            if ($description != null) {
+                $newCat->short_description = $description->content;
+                $newCat->description = $description->content;
+            }
+            //replace Sharebility with Schooldynamics
+            $newCat->description = str_replace('Sharebility', 'Schooldynamics', $newCat->description);
+            $newCat->short_description = str_replace('Sharebility', 'Schooldynamics', $newCat->short_description);
+
+            //get image
+            $image = $cat_html->find('meta[property=og:image]', 0);
+            if ($image == null) {
+                $image = $cat_html->find('meta[name=twitter:image]', 0);
+            }
+            //if $image is null try twitter:image
+            if ($image == null) {
+                $image = $cat_html->find('meta[name=twitter:image]', 0);
+            }
+            if ($image != null) {
+                $newCat->image = $image->content;
+            }
+
+
+            //random solid color
+            $newCat->color = '#' . str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT);
+            $newCat->slug = $slug;
+            //order count + 1
+            $newCat->order = LearningMaterialCategory::count() + 1;
+            $newCat->status = 1;
+            $newCat->external_url = $a->href;
+            $newCat->external_id = $slug;
+            $newCat->save();
+            echo 'Downloaded ' . $newCat->id . '. ' . $newCat->name . ' ' . $newCat->external_id . ' ' . $newCat->external_url . ' ' . $newCat->status . ' ' . $newCat->order . ' ' . $newCat->color . ' ' . $newCat->image . ' ' . $newCat->description . ' ' . $newCat->short_description . '<br><hr>';
+        }
+        return;
     }
 
     public static function process_thumbs()

@@ -20,6 +20,7 @@ class Link extends Model
             if ($existingLink) {
                 return false;
             } 
+            
         });
     } 
 }

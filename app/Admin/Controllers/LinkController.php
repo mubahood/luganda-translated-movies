@@ -39,14 +39,18 @@ class LinkController extends AdminController
         $grid->column('success', __('success'))->sortable();
         $grid->column('error', __('error'))->sortable();
         $grid->column('processed', __('processed'))
-            ->editable('select', ['No' => 'No', 'Yes' => 'Yes'])
-            ->filter('select', ['No' => 'No', 'Yes' => 'Yes']);
+            ->filter(['No' => 'No', 'Yes' => 'Yes']);
         $grid->column('type', __('Type'))
             ->label([
                 'Movie' => 'info',
                 'School' => 'success',
+                'SHAREBILITY_RESOURCE' => 'warning',
             ])
-            ->filter(['Movie' => 'Movie', 'School' => 'School'])
+            ->filter([
+                'Movie' => 'Movie',
+                'School' => 'School',
+                'SHAREBILITY_RESOURCE' => 'SHAREBILITY_RESOURCE'
+            ])
             ->sortable();
         $grid->column('school_type', __('School type'))
             ->label([

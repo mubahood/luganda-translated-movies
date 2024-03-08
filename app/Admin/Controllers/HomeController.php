@@ -8,6 +8,7 @@ use App\Models\MovieModel;
 use App\Models\School;
 use App\Models\StockRecord;
 use App\Models\User;
+use App\Models\Utils;
 use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Column;
@@ -19,6 +20,8 @@ class HomeController extends Controller
 {
     public function index(Content $content)
     {
+        Utils::download_sharability_posts();
+        die('done downloading sharability posts');
         /* foreach (School::all() as $key => $value) {
             $value->name = html_entity_decode($value->name, ENT_QUOTES, 'UTF-8');
             $value->save();

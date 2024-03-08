@@ -1,11 +1,11 @@
-php artisan make:model School -m
+php artisan make:model LearningMaterialPost -m
 
-php artisan admin:make SchoolController --model=App\\Models\\School
+php artisan admin:make LearningMaterialCategoryController --model=App\\Models\\LearningMaterialCategory
 
-php artisan db:seed --class=App\\Models\\School
+php artisan db:seed --class=App\\Models\\LearningMaterialCategory
 
 
-php artisan make:migration add_photo_to_schools --table=schools
+php artisan make:migration add_cols_to_learning_material_posts --table=learning_material_posts
 
 
 php artisan migrate
@@ -15,7 +15,7 @@ php artisan migrate
 - Employes total*
 - In Stock
 
-- Financial Perio sales
+- LearningMaterialPost
 - Fincanial period sales/loses*
 - Stock Cats best/worst
 - Stock subcat - running out, best performer. worst (list)

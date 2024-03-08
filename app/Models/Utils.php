@@ -39,39 +39,55 @@ class Utils
         //self::get_school_profiles(); //profiles
 
         //self::get_past_paper_cats();
-        self::get_past_paper_pages();
+        //self::get_past_paper_pages();
+        Utils::download_sharability_posts();
         die('-done-');
         return 'Done';
     }
 
-    public static function download_sharability_posts(){
+    public static function download_sharability_posts()
+    {
         //get last 100 links of type SHAREBILITY_POST
-        $links = Link::where('type', 'SHAREBILITY_RESOURCE')->limit(100)->get();
+        $links = Link::where('type', 'SHAREBILITY_RESOURCE')
+            ->where('processed', 'NO')
+            ->limit(1000)->get();
         foreach ($links as $key => $link) {
             $html = null;
             try {
                 $html = file_get_html($link->url);
             } catch (\Throwable $th) {
+                $link->processed = 'Yes';
+                $link->success = 'No';
+                $link->error = $th->getMessage();
                 continue;
             }
             if ($html == null) {
+                $link->processed = 'Yes';
+                $link->success = 'No';
+                $link->error = 'Html not found';
+                $link->save();
                 continue;
             }
             $title = $html->find('title', 0);
             if ($title == null) {
+                $link->processed = 'Yes';
+                $link->success = 'No';
+                $link->error = 'Title not found';
+                $link->save();
                 continue;
             }
-            $title = $title->plaintext; 
+            $title = $title->plaintext;
             $title = str_replace('| Sharebility Uganda', '', $title);
             $title = str_replace('Sharebility Uganda', '', $title);
             $title = str_replace('Resources', '', $title);
             $title = str_replace('| Sharebility', '', $title);
             $title = str_replace('Sharebility', '', $title);
             $title = trim($title);
-            
+
             $post = new LearningMaterialPost();
             $post->title = $title;
-            $post->learning_material_category_id = $link->learning_material_category_id;
+            $post->learning_material_category_id = $link->school_type;
+
 
             //slug
             $slug = explode('/', $link->url);
@@ -86,15 +102,17 @@ class Utils
             //external_url if already exists
             if (LearningMaterialPost::where('external_url', $link->url)->exists()) {
                 continue;
-            } 
+            }
 
             //check if external_id exists
             if (LearningMaterialPost::where('external_id', $slug)->exists()) {
                 continue;
-            } 
+            }
 
             $post->external_id = $slug;
             $post->slug = $slug;
+            $post->external_url = $link->url;
+
 
             //get description
             $description = $html->find('meta[name=description]', 0);
@@ -113,28 +131,106 @@ class Utils
             $post->description = str_replace('Sharebility', 'Schooldynamics', $post->description);
             $post->short_description = str_replace('Sharebility', 'Schooldynamics', $post->short_description);
 
+            //get image
+            $image = $html->find('meta[property=og:image]', 0);
+            if ($image == null) {
+                $image = $html->find('meta[name=twitter:image]', 0);
+            }
+            //if $image is null try twitter:image
+            if ($image == null) {
+                $image = $html->find('meta[name=twitter:image]', 0);
+            }
+            if ($image != null) {
+                $post->image = $image->content;
+            }
+
+
             // a in .wpdm-button-area
+            $post->download_url = null;
             $a = $html->find('.wpdm-button-area a', 0);
-            dd($a->href); 
-            
+            if ($a != null) {
+                $post->download_url = $a->href;
+            } else {
+                $a = $html->find('.wpdm-download-link a', 0);
+                if ($a != null) {
+                    $post->download_url = $a->href;
+                }
+            }
 
-            dd($link);
+            if ($post->download_url == null) {
+                echo '<hr>External id: ' . $post->external_id . ' Download url not found';
+                $link->processed = 'Yes';
+                $link->success = 'No';
+                $link->error = 'Download url not found';
+                $link->save();
+                continue;
+            }
 
-/* 
+            //download file 
+            $public_path = public_path() . '/storage/files';
+            //check if public_path does not exist
+            if (!file_exists($public_path)) {
+                mkdir($public_path);
+            }
+            //get last url segment
+            $url_segments = explode('/', $post->download_url);
+            $file_name = time() . "_" . rand(1000, 100000);
+            if (count($url_segments) > 0) {
+                $file_name = $url_segments[count($url_segments) - 1];
+            }
 
-            $table->text('short_description')->nullable();
-            $table->text('description')->nullable();
-            $table->text('image')->nullable();
-            $table->text('slug')->nullable();
-            $table->text('external_url')->nullable();
-            $table->text('external_download_url')->nullable();
-            $table->text('download_url')->nullable();
-*/            
-            dd($title);
+            //download file
+            try {
 
-            $link->save();
-            echo $link->id . ' ' . $link->title . ' ' . $link->url . '<br>';
-        } 
+                //GET redirect  of $post->download_url
+                $ch = curl_init($post->download_url);
+                curl_setopt($ch, CURLOPT_HEADER, true);
+                curl_setopt($ch, CURLOPT_NOBODY, true);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                curl_exec($ch);
+                $redirect_url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+                curl_close($ch);
+                if ($redirect_url == null) {
+                    throw new \Exception('Redirect url not found');
+                }
+                $post->external_download_url = $redirect_url;
+
+                //check post with external_download_url exists
+                if (LearningMaterialPost::where('external_download_url', $redirect_url)->exists()) {
+                    $link->processed = 'Yes';
+                    $link->success = 'No';
+                    $link->error = 'Download url already exists for another post';
+                    $link->save();
+                    continue;
+                }
+
+                //get file extension
+                $file_extension = pathinfo($redirect_url, PATHINFO_EXTENSION);
+                $file_name = 'schooldynamics-file-' . time() . "_" . rand(100000, 100000000) . '.' . $file_extension;
+                $ch = curl_init($post->download_url);
+                $fp = fopen($public_path . '/' . $file_name, 'wb');
+                curl_setopt($ch, CURLOPT_FILE, $fp);
+                curl_setopt($ch, CURLOPT_HEADER, true);
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                curl_exec($ch);
+                curl_close($ch);
+                fclose($fp);
+                $post->download_url = 'files/' . $file_name;
+                $post->save();
+                $link->processed = 'Yes';
+                $link->success = 'Yes';
+                $link->save();
+                echo '<hr> ==> Downloaded ' . $post->id . '. ' . $link->title;
+            } catch (\Throwable $th) {
+                $link->processed = 'Yes';
+                $link->success = 'No';
+                $link->error = $th->getMessage();
+                die($th->getMessage());
+                $link->save();
+                continue;
+            }
+        }
     }
     public static function get_past_paper_pages()
     {
@@ -281,25 +377,7 @@ class Utils
 
             $due_page->last_visit = Carbon::now();
             $due_page->save();
-            echo('<hr>done with ' . $due_page->url);
-            //$page->save();
-
-
-            $html = null;
-
-            //pages 
-
-            try {
-                $html = file_get_html($external_url);
-            } catch (\Throwable $th) {
-                continue;
-            }
-            if ($html == null) {
-                continue;
-            }
-            die($external_url);
-            dd($html);
-            $links = $html->find('a');
+            echo ('<hr>done with ' . $due_page->url);
         }
     }
     public static function get_past_paper_cats()

@@ -1,8 +1,8 @@
 php artisan make:model LearningMaterialPost -m
 
-php artisan admin:make LearningMaterialCategoryController --model=App\\Models\\LearningMaterialCategory
+php artisan admin:make LearningMaterialPostController --model=App\\Models\\LearningMaterialPost
 
-php artisan db:seed --class=App\\Models\\LearningMaterialCategory
+php artisan db:seed --class=App\\Models\\LearningMaterialPost
 
 
 php artisan make:migration add_cols_to_learning_material_posts --table=learning_material_posts

@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\LearningMaterialCategory;
 use App\Models\LearningMaterialPost;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -25,20 +26,52 @@ class LearningMaterialPostController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new LearningMaterialPost());
+        $grid->filter(function ($filter) {
+            $filter->disableIdFilter();
+            $cats = [];
+            foreach (LearningMaterialCategory::all() as $key => $value) {
+                $cats[$value->id] = $value->name;
+            }
+            $filter->equal('learning_material_category_id', 'Category')
+                ->select($cats);
+        });
+        $grid->model()->orderBy('id', 'desc');
+        $grid->quickSearch('title');
+        $grid->column('id', __('Id'))->sortable();
+        $grid->column('title', __('Title'))->sortable()->limit(30);
+        $grid->column('learning_material_category_id', __('Category'))->display(function ($learning_material_category_id) {
+            return LearningMaterialPost::find($learning_material_category_id)->title;
+        })->sortable();
+        $grid->column('external_id', __('External id'))->sortable()->hide();
+        $grid->column('short_description', __('Short description'))->hide();
+        $grid->column('description', __('Description'))->hide();
+        $grid->column('image', __('Image'))->hide();
+        $grid->column('slug', __('Slug'))->hide();
+        $grid->column('external_url', __('External url'))
+            ->display(function ($external_url) {
+                if ($external_url == null) {
+                    return "N/A";
+                }
+                return "<a href='$external_url' title='$external_url' target='_blank'>VISIT</a>";
+            })->sortable();
+        $grid->column('external_download_url', __('Download'))
+            ->display(function ($external_download_url) {
+                if ($external_download_url == null) {
+                    return "N/A";
+                }
+                return "<a href='$external_download_url' title='$external_download_url' target='_blank'>DOWNLOAD</a>";
+            })->sortable();
+        $grid->column('download_url', __('Download Link'))->display(function ($download_url) {
+            if ($download_url == null) {
+                return "N/A";
+            }
+            //if not contain http
+            if (!str_contains($download_url, 'http')) {
+                $download_url = url('storage') . '/' . $download_url;
+            }
 
-        $grid->column('id', __('Id'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
-        $grid->column('learning_material_category_id', __('Learning material category id'));
-        $grid->column('title', __('Title'));
-        $grid->column('external_id', __('External id'));
-        $grid->column('short_description', __('Short description'));
-        $grid->column('description', __('Description'));
-        $grid->column('image', __('Image'));
-        $grid->column('slug', __('Slug'));
-        $grid->column('external_url', __('External url'));
-        $grid->column('external_download_url', __('External download url'));
-        $grid->column('download_url', __('Download url'));
+            return "<a href='$download_url' title='$download_url' target='_blank'>DOWNLOAD</a>";
+        })->sortable();
 
         return $grid;
     }

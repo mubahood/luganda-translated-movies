@@ -25,20 +25,19 @@ class LearningMaterialCategoryController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new LearningMaterialCategory());
-
-        $grid->column('id', __('Id'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
-        $grid->column('name', __('Name'));
-        $grid->column('short_description', __('Short description'));
-        $grid->column('description', __('Description'));
-        $grid->column('image', __('Image'));
-        $grid->column('color', __('Color'));
-        $grid->column('icon', __('Icon'));
-        $grid->column('slug', __('Slug'));
-        $grid->column('order', __('Order'));
-        $grid->column('status', __('Status'));
-        $grid->column('external_url', __('External url'));
+        $grid->model()->orderBy('id', 'desc');
+        $grid->quickSearch('name');
+        $grid->column('id', __('Id'))->sortable();
+        $grid->column('name', __('Name'))->sortable();
+        $grid->column('short_description', __('Short description'))->hide();
+        $grid->column('description', __('Description'))->hide();
+        $grid->column('image', __('Image'))->hide();
+        $grid->column('color', __('Color'))->hide();
+        $grid->column('icon', __('Icon'))->hide();
+        $grid->column('slug', __('Slug'))->hide();
+        $grid->column('order', __('Order'))->hide();
+        $grid->column('status', __('Status'))->hide();
+        $grid->column('external_url', __('External url'))->url();
 
         return $grid;
     }

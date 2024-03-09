@@ -1,0 +1,30 @@
+HTTP/1.1 302 Found
+Date: Sat, 09 Mar 2024 22:43:34 GMT
+Server: Apache
+Set-Cookie: __wpdm_client=94dc94e2c93f56ff37ea955546753c08; path=/; secure; HttpOnly
+location: https://sharebility.b-cdn.net/YOURS/AILET%20%20JOINT%20MOCK%20EXAMINATION%20%202023%20HISTORY%20S.4%20(2)https://sharebility.b-cdn.net/YOURS/AILET%20%20JOINT%20MOCK%20EXAMINATION%20%202023%20HISTORY%20S.4%20(2).pdf.pdf
+X-Endurance-Cache-Level: 0
+X-nginx-cache: WordPress
+Content-Length: 0
+Content-Type: text/html; charset=UTF-8
+
+HTTP/2 404 
+date: Sat, 09 Mar 2024 22:43:35 GMT
+content-type: text/html
+vary: Accept-Encoding
+server: BunnyCDN-DE1-1053
+cdn-pullzone: 1027302
+cdn-uid: 5049302e-6bd8-4e28-b496-b6dab0a8442b
+cdn-requestcountrycode: UG
+cache-control: no-cache
+cdn-storageserver: DE-51
+cdn-proxyver: 1.04
+cdn-requestpullsuccess: True
+cdn-requestpullcode: 404
+cdn-cachedat: 03/09/2024 22:43:35
+cdn-edgestorageid: 1079
+cdn-status: 404
+cdn-requestid: 30bd19d4b0b168b9e18249b5bc6e2408
+cdn-cache: MISS
+
+<html><head><title>404 - File Not Found</title><link href='//fonts.bunny.net/css?family=Rubik:300,400,500' rel='stylesheet' type='text/css'><style>html, body { width: 100%; margin: 0; padding: 0; text-align: center; font-family: 'Rubik'; background-repeat: no-repeat; background-position: bottom center; background-size: cover; color: white; height: 100%; background-color: #313335; } h1 {margin-bottom: 0px;font-weight: bold;font-size: 140px;font-weight: 500;padding-top: 130px;margin-bottom: -35px;}h2 {font-size: 45px;color: white; font-weight: 200;}</style></head><body><div id='content'><h1 style='margin-bottom: -35px;'>404</h1><h2>File Not Found</h2></div></body></html>

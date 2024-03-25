@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::table('learning_material_categories', function (Blueprint $table) {
             $table->text('external_id')->nullable();
-
-            $table->text('name')->nullable();
             $table->text('short_description')->nullable();
             $table->text('description')->nullable();
             $table->text('image')->nullable();

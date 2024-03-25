@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::table('learning_material_categories', function (Blueprint $table) {
             $table->text('external_id')->nullable();
             //$table->text('short_description')->nullable();
-            $table->text('description')->nullable();
-            $table->text('image')->nullable();
-            $table->text('color')->nullable();
-            $table->text('icon')->nullable();
-            $table->text('slug')->nullable();
-            $table->integer('order')->nullable();
-            $table->integer('status')->nullable();
-            $table->text('external_url')->nullable();
+            //$table->text('description')->nullable();
+            // $table->text('image')->nullable();
+            // $table->text('color')->nullable();
+            // $table->text('icon')->nullable();
+            // $table->text('slug')->nullable();
+            // $table->integer('order')->nullable();
+            // $table->integer('status')->nullable();
+            // $table->text('external_url')->nullable();
             
         });
     }

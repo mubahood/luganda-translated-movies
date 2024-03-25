@@ -1,0 +1,28 @@
+php artisan make:model MovieLike -m
+
+php artisan admin:make MovieLikeController --model=App\\Models\\MovieLike
+
+php artisan db:seed --class=App\\Models\\MovieLike
+
+
+php artisan make:migration add_progress_cols_to_movie_views --table=movie_views
+
+
+php artisan migrate
+---
+- This week sales
+- 
+- Employes total*
+- In Stock
+
+- MovieLike
+- Fincanial period sales/loses*
+- Stock Cats best/worst
+- Stock subcat - running out, best performer. worst (list)
+- Ricent stock items
+- Recent seles (list)
+- Stock cats by percentage (pie)
+
+
+
+

@@ -1,0 +1,28 @@
+php artisan make:model LearningMaterialPost -m
+
+php artisan admin:make LearningMaterialPostController --model=App\\Models\\LearningMaterialPost
+
+php artisan db:seed --class=App\\Models\\LearningMaterialPost
+
+
+php artisan make:migration add_cols_to_learning_material_posts --table=learning_material_posts
+
+
+php artisan migrate
+---
+- This week sales
+- 
+- Employes total*
+- In Stock
+
+- LearningMaterialPost
+- Fincanial period sales/loses*
+- Stock Cats best/worst
+- Stock subcat - running out, best performer. worst (list)
+- Ricent stock items
+- Recent seles (list)
+- Stock cats by percentage (pie)
+
+
+
+

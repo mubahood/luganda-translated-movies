@@ -12,6 +12,17 @@ include_once('simple_html_dom.php');
 class Utils
 {
 
+    
+    //coenvet secondsToMinutes 
+    public static function secondsToMinutes($seconds)
+    {
+        if($seconds == 0){
+            return '0:00';
+        }
+        $minutes = floor($seconds / 60);
+        $seconds = $seconds % 60;
+        return $minutes . ':' . $seconds;
+    }
 
     public static $JV = [
         'Junior' => 'Junior',

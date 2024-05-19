@@ -2,6 +2,7 @@
 
 use App\Models\MovieModel;
 use App\Models\Utils;
+
 Encore\Admin\Form::forget(['map', 'editor']);
 
 //Utils::system_boot();
@@ -24,17 +25,19 @@ try {
 
     $data['email'] = $u->email;
     $date = date('Y-m-d');
-    $data['subject'] = "Password Reset Code - ".env('APP_NAME');
+    $data['subject'] = "Password Reset Code - " . env('APP_NAME');
     $data['body'] = $mail_body;
     $data['data'] = $data['body'];
     $data['name'] = $u->name;
     try {
         Utils::mail_sender($data);
+        dd("success 1");
     } catch (\Throwable $th) {
+        dd("failed because 1 " . $th->getMessage());
+        return Utils::error($th->getMessage());
     }
-    dd("success");
 } catch (\Exception $e) {
-    dd("failed because " . $e->getMessage());
+    dd("failed because 2 " . $e->getMessage());
     return Utils::error($e->getMessage());
 }
 die("done");

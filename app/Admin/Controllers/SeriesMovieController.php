@@ -35,8 +35,8 @@ class SeriesMovieController extends AdminController
         $grid->column('description', __('Description'))->hide();
         $grid->column('total_seasons', __('Total seasons'));
         $grid->column('total_episodes', __('Total episodes'));
-        $grid->column('total_views', __('Total views'));
-        $grid->column('total_rating', __('Total rating'));
+        $grid->column('total_views', __('Total views')); 
+        $grid->column('is_active', __('Total rating'))->editable('select', ['Yes' => 'Yes', 'No' => 'No']);
 
         return $grid;
     }
@@ -61,7 +61,7 @@ class SeriesMovieController extends AdminController
         $show->field('total_seasons', __('Total seasons'));
         $show->field('total_episodes', __('Total episodes'));
         $show->field('total_views', __('Total views'));
-        $show->field('total_rating', __('Total rating'));
+        $show->field('total_rating', __('Total rating')); 
 
         return $show;
     }
@@ -86,6 +86,9 @@ class SeriesMovieController extends AdminController
         $form->decimal('total_episodes', __('Total episodes'));
         $form->decimal('total_views', __('Total views'));
         $form->decimal('total_rating', __('Total rating'));
+        $form->radio('is_active', __('Are you UPLOADING movies?'))
+            ->options(['Yes' => 'Yes', 'No' => 'No'])
+            ->default('No');
 
         return $form;
     }

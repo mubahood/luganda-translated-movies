@@ -194,9 +194,21 @@ class MovieModelController extends AdminController
         $form->image('thumbnail_url', __('Thumbnail'))
             ->removable()
             ->downloadable();
-        $form->file('url', __('Movie file'));
+        
 
-        $form->select('genre', __('VJ'))
+        $form->radio('stars', 'Source Type')
+            ->options([
+                'file' => 'FILE',
+                'url' => 'URL',
+            ])
+            ->when('file', function (Form $form) {
+                $form->file('url', __('Movie file'))->removable();
+            })->when('url', function (Form $form) {
+                $form->text('external_url', __('Movie url'));
+            })->rules('required');
+
+
+        $form->radio('genre', __('VJ'))
             ->options(
                 Utils::$JV
             )->rules('required');
@@ -205,8 +217,6 @@ class MovieModelController extends AdminController
                 'Movie' => 'Movie',
                 'Series' => 'Series',
             ])
-            ->default('movie')
-            ->rules()
             ->when('Series', function (Form $form) {
                 $form->select('category_id', __('Select Series'))->rules('required')
                     ->options(SeriesMovie::all()->pluck('title', 'id'));
@@ -218,33 +228,36 @@ class MovieModelController extends AdminController
                     )->rules('required');
             });
 
-        $form->divider();
-        $form->decimal('year', __('Year'));
-        $form->decimal('rating', __('Rating'));
-        $form->decimal('duration', __('Duration'));
-        $form->quill('description', __('Movie Description'));
-        $form->text('image_url', __('Image url'));
-        $form->text('external_url', __('External url'));
-        $form->decimal('size', __('Size'));
 
-        $form->text('director', __('Director'));
-        $form->text('stars', __('Stars'));
-        $form->text('language', __('Language'));
-        $form->text('imdb_url', __('Imdb url'));
-        $form->decimal('imdb_rating', __('Imdb rating'));
-        $form->decimal('imdb_votes', __('Imdb votes'));
-        $form->text('imdb_id', __('Imdb id'));
+        $form->radio('director', __('Advanced Information'))
+            ->options([
+                'Basic' => 'Basic',
+                'Advanced' => 'Advanced',
+            ])
+            ->when('Advanced', function (Form $form) {
+                $form->text('language', __('Language'));
+                $form->text('imdb_url', __('Imdb url'));
+                $form->decimal('imdb_rating', __('Imdb rating'));
+                $form->decimal('imdb_votes', __('Imdb votes'));
+                $form->text('imdb_id', __('Imdb id'));
+                $form->text('views_count', __('Views count'));
+                $form->text('likes_count', __('Likes count'));
+                $form->text('dislikes_count', __('Dislikes count'));
+                $form->text('comments_count', __('Comments count'));
+                $form->text('comments', __('Comments'));
+                $form->text('is_processed', __('Is processed'));
+                $description = 'This is a movie';
 
 
-
-        $form->text('views_count', __('Views count'));
-        $form->text('likes_count', __('Likes count'));
-        $form->text('dislikes_count', __('Dislikes count'));
-        $form->text('comments_count', __('Comments count'));
-        $form->text('comments', __('Comments'));
-
-        $form->text('is_processed', __('Is processed'));
-
+                $form->divider();
+                $form->decimal('year', __('Year'));
+                $form->decimal('rating', __('Rating'));
+                $form->decimal('duration', __('Duration'));
+                $form->quill('description', __('Movie Description'));
+                $form->text('image_url', __('Image url'));
+                $form->decimal('size', __('Size'));
+            })->default('Basic');
+        $form->disableReset();
         return $form;
     }
 }

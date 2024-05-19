@@ -34,7 +34,7 @@ class MovieModelController extends AdminController
         $grid->quickSearch('title');
         $grid->model()->orderBy('updated_at', 'desc');
         $grid->disableBatchActions();
-        $grid->column('id', __('Id'))->sortable()->hide();
+        $grid->column('id', __('Id'))->sortable(); 
         $grid->column('created_at', __('Created'))
             ->display(function ($created_at) {
                 return date('Y-m-d H:i:s', strtotime($created_at));

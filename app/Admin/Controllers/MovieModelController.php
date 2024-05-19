@@ -220,14 +220,14 @@ class MovieModelController extends AdminController
                     $active_serrie = SeriesMovie::where('is_active', 'Yes')->first();
                     $serrie_id = null;
                     $number_of_episodes = 0;
-                    $count = MovieModel::where('category_id', $active_serrie->id)->count();
-                    if ($count > 0) {
-                        $number_of_episodes = $count;
-                    }
-                    $number_of_episodes += 1;
                     if ($active_serrie) {
+                        $count = MovieModel::where('category_id', $active_serrie->id)->count();
+                        if ($count > 0) {
+                            $number_of_episodes = $count;
+                        }
                         $serrie_id = $active_serrie->id;
                     }
+                    $number_of_episodes += 1;
                     $form->select('category_id', __('Select Series'))->rules('required')
                         ->options(SeriesMovie::all()->pluck('title', 'id'))
                         ->default($serrie_id);
@@ -298,7 +298,7 @@ class MovieModelController extends AdminController
                 'Inactive' => 'Inactive',
             ])
             ->default('Active')
-            ->rules('required'); 
+            ->rules('required');
         return $form;
     }
 }

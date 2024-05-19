@@ -228,13 +228,13 @@ class MovieModelController extends AdminController
                         $serrie_id = $active_serrie->id;
                     }
                     $number_of_episodes += 1;
-                    $form->select('category_id', __('Select Series'))->rules('required')
+                    $form->radio('category_id', __('Select Series'))->rules('required')
                         ->options(SeriesMovie::all()->pluck('title', 'id'))
                         ->default($serrie_id);
                     $form->decimal('country', 'Position')->rules('required')
                         ->default($number_of_episodes);
                 })->when('Movie', function (Form $form) {
-                    $form->select('category', __('Category'))
+                    $form->radio('category', __('Category'))
                         ->options(
                             Utils::$CATEGORIES
                         )->rules('required');
@@ -251,11 +251,11 @@ class MovieModelController extends AdminController
                     'Series' => 'Series',
                 ])
                 ->when('Series', function (Form $form) {
-                    $form->select('category_id', __('Select Series'))->rules('required')
+                    $form->radio('category_id', __('Select Series'))->rules('required')
                         ->options(SeriesMovie::all()->pluck('title', 'id'));
                     $form->decimal('country', 'Position')->rules('required');
                 })->when('Movie', function (Form $form) {
-                    $form->select('category', __('Category'))
+                    $form->radio('category', __('Category'))
                         ->options(
                             Utils::$CATEGORIES
                         )->rules('required');

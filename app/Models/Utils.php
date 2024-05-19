@@ -6,11 +6,35 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 include_once('simple_html_dom.php');
 
 class Utils
 {
+
+
+       //mail sender
+       public static function mail_sender($data)
+       {
+           try {
+               Mail::send(
+                   'mails/mail-1',
+                   [
+                       'body' => $data['body'],
+                       'title' => $data['subject']
+                   ],
+                   function ($m) use ($data) {
+                       $m->to($data['email'], $data['name'])
+                           ->subject($data['subject']);
+                       $m->from(env('MAIL_FROM_ADDRESS'), $data['subject']);
+                   }
+               );
+           } catch (\Throwable $th) {
+               $msg = 'failed';
+               throw $th;
+           }
+       }
 
     
     //coenvet secondsToMinutes 

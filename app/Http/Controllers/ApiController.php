@@ -281,8 +281,6 @@ class ApiController extends BaseController
             $last_name = $names[1];
         }
 
-
-
         $new_user = new User();
         $new_user->first_name = $first_name;
         $new_user->last_name = $last_name;
@@ -315,5 +313,57 @@ class ApiController extends BaseController
             'user' => $registered_user,
             'company' => Company::find(1),
         ], "Registration successful.");
+    }
+
+
+    public function request_password_reset_code(Request $r)
+    {
+
+
+
+        //check if email is provided
+        if ($r->email == null) {
+            Utils::error("Email is required.");
+        }
+        //check if email is valid
+        if (!filter_var($r->email, FILTER_VALIDATE_EMAIL)) {
+            Utils::error("Email is invalid.");
+        }
+
+        //check if email is already registered
+        $u = User::where('email', $r->email)->first();
+        if ($u == null) {
+            Utils::error("Account not found with $r->email.");
+        }
+        $code = rand(100000, 999999);
+        $u->secret_code = $code;
+        $u->save();
+
+        try {
+
+            $mail_body = <<<EOD
+            <p>Dear {$u->name},</p>
+            <p>Your password reset code is <b>$code</b></p>
+            <p>Thank you.</p>
+            EOD;
+
+            $data['email'] = $u->email;
+            $date = date('Y-m-d');
+            $data['subject'] = env('APP_NAME') . " - Password Reset Code";
+            $data['body'] = $mail_body;
+            $data['data'] = $data['body'];
+            $data['name'] = $u->name;
+            try {
+                Utils::mail_sender($data);
+            } catch (\Throwable $th) {
+            }
+            $u = User::find($u->id);
+        } catch (\Exception $e) {
+            return Utils::error($e->getMessage());
+        } 
+
+        Utils::success([
+            'user' => $u,
+        ], "Code sent successfully.");
     }
 }

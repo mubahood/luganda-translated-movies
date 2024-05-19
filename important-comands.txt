@@ -5,7 +5,7 @@ php artisan admin:make MovieLikeController --model=App\\Models\\MovieLike
 php artisan db:seed --class=App\\Models\\MovieLike
 
 
-php artisan make:migration add_progress_cols_to_series_movies --table=series_movies
+php artisan make:migration add_secret_code_to_admin_users --table=admin_users
 
 
 php artisan migrate

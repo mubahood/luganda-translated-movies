@@ -316,6 +316,49 @@ class ApiController extends BaseController
     }
 
 
+
+    public function password_reset(Request $r)
+    {
+
+        if ($r->code == null) {
+            Utils::error("Secret code is required.");
+        }
+
+        //check if email is provided
+        if ($r->email == null) {
+            Utils::error("Email is required.");
+        }
+        //check if email is valid
+        if (!filter_var($r->email, FILTER_VALIDATE_EMAIL)) {
+            Utils::error("Email is invalid.");
+        }
+
+        //check if email is already registered
+        $u = User::where('email', $r->email)->first();
+        if ($u == null) {
+            Utils::error("Account not found with $r->email.");
+        }
+        //check if password is provided
+        if ($r->password == null) {
+            Utils::error("Password is required.");
+        }
+
+        //check code
+        if ($u->secret_code != $r->code) {
+            Utils::error("Invalid secret code.");
+        }
+        //set new password
+        $u->password = password_hash($r->password, PASSWORD_DEFAULT);
+        $u->secret_code = null;
+        $u->save();
+        $u = User::find($u->id);
+        Utils::success([
+            'user' => $u,
+            'company' => Company::find(1),
+        ], "Password reset successful.");
+    }
+
+
     public function request_password_reset_code(Request $r)
     {
 
@@ -339,28 +382,23 @@ class ApiController extends BaseController
         $u->secret_code = $code;
         $u->save();
 
-        try {
-
-            $mail_body = <<<EOD
+        $mail_body = <<<EOD
             <p>Dear {$u->name},</p>
             <p>Your password reset code is <b><code>$code</code></b></p>
             <p>Thank you.</p>
             EOD;
-            $data['email'] = $u->email;
-            $date = date('Y-m-d');
-            $data['subject'] = "Password Reset Code - " . env('APP_NAME');
-            $data['body'] = $mail_body;
-            $data['data'] = $data['body'];
-            $data['name'] = $u->name;
-            try {
-                Utils::mail_sender($data);
-            } catch (\Throwable $th) {
-            }
-            $u = User::find($u->id);
-        } catch (\Exception $e) {
-            return Utils::error($e->getMessage());
+        $data['email'] = $u->email;
+        $date = date('Y-m-d');
+        $data['subject'] = "Password Reset Code - " . env('APP_NAME');
+        $data['body'] = $mail_body;
+        $data['data'] = $data['body'];
+        $data['name'] = $u->name;
+        try {
+            Utils::mail_sender($data);
+        } catch (\Throwable $th) {
+            return Utils::error($th->getMessage());
         }
-
+        $u = User::find($u->id);
         Utils::success([
             'user' => $u,
         ], "Code sent successfully.");

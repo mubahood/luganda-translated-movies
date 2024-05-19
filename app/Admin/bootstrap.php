@@ -11,7 +11,7 @@ Encore\Admin\Form::forget(['map', 'editor']);
     $value->save(); 
 } */
 
-try {
+/* try {
     $u = \App\Models\User::where('email', 'mubahood360@gmail.com')->first();
     $code = rand(100000, 999999);
     $u->secret_code = $code;
@@ -40,4 +40,4 @@ try {
     dd("failed because 2 " . $e->getMessage());
     return Utils::error($e->getMessage());
 }
-die("done");
+die("done"); */

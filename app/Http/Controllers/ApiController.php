@@ -244,13 +244,12 @@ class ApiController extends BaseController
     public function register(Request $r)
     {
 
-        if ($r->first_name == null) {
+
+
+        if ($r->name == null) {
             Utils::error("First name is required.");
         }
-        //check if last name is provided
-        if ($r->last_name == null) {
-            Utils::error("Last name is required.");
-        }
+
         //check if email is provided
         if ($r->email == null) {
             Utils::error("Email is required.");
@@ -270,25 +269,30 @@ class ApiController extends BaseController
             Utils::error("Password is required.");
         }
 
-        //check if company name is provided
-        if ($r->company_name == null) {
-            Utils::error("Company name is required.");
-        }
-        if ($r->currency == null) {
-            Utils::error("Currency is required.");
+        $name = $r->name;
+        $names = explode(" ", $name);
+        $first_name = null;
+        $last_name = null;
+        if (count($names) == 1) {
+            $first_name = $names[0];
+            $last_name = "";
+        } else {
+            $first_name = $names[0];
+            $last_name = $names[1];
         }
 
+
+
         $new_user = new User();
-        $new_user->first_name = $r->first_name;
-        $new_user->last_name = $r->last_name;
+        $new_user->first_name = $first_name;
+        $new_user->last_name = $last_name;
         $new_user->username = $r->email;
         $new_user->email = $r->email;
         $new_user->password = password_hash($r->password, PASSWORD_DEFAULT);
-        $new_user->name = $r->first_name . " " . $r->last_name;
-        $new_user->phone_number = $r->phone_number;
+        $new_user->name = $first_name . " " . $last_name;
+        $new_user->phone_number = $r->email;
         $new_user->company_id = 1;
         $new_user->status = "Active";
-
         try {
             $new_user->save();
         } catch (\Exception $e) {
@@ -300,25 +304,6 @@ class ApiController extends BaseController
             Utils::error("Failed to register user.");
         }
 
-        $company = new Company();
-        $company->owner_id = $registered_user->id;
-        $company->name = $r->company_name;
-        $company->email = $r->email;
-        $company->phone_number = $r->phone_number;
-        $company->status = 'Active';
-        $company->currency = $r->currency;
-        $company->license_expire = date('Y-m-d', strtotime("+1 year"));
-
-        try {
-            $company->save();
-        } catch (\Exception $e) {
-            Utils::error($e->getMessage());
-        }
-
-        $registered_company = Company::find($company->id);
-        if ($registered_company == null) {
-            Utils::error("Failed to register company.");
-        }
 
         //DB instert into admin_role_users
         DB::table('admin_role_users')->insert([
@@ -328,7 +313,7 @@ class ApiController extends BaseController
 
         Utils::success([
             'user' => $registered_user,
-            'company' => $registered_company,
+            'company' => Company::find(1),
         ], "Registration successful.");
     }
 }

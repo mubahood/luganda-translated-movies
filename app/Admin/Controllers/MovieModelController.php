@@ -183,18 +183,11 @@ class MovieModelController extends AdminController
     protected function form()
     {
         $form = new Form(new MovieModel());
-        $form->radio('status', __('Status'))
-            ->options([
-                'Active' => 'Active',
-                'Inactive' => 'Inactive',
-            ])
-            ->default('active')
-            ->rules('required');
         $form->text('title', __('Title'))->rules('required');
         $form->image('thumbnail_url', __('Thumbnail'))
             ->removable()
             ->downloadable();
-        
+
 
         $form->radio('stars', 'Source Type')
             ->options([
@@ -208,25 +201,66 @@ class MovieModelController extends AdminController
             })->rules('required');
 
 
-        $form->radio('genre', __('VJ'))
-            ->options(
-                Utils::$JV
-            )->rules('required');
-        $form->radio('type', __('Type'))
-            ->options([
-                'Movie' => 'Movie',
-                'Series' => 'Series',
-            ])
-            ->when('Series', function (Form $form) {
-                $form->select('category_id', __('Select Series'))->rules('required')
-                    ->options(SeriesMovie::all()->pluck('title', 'id'));
-                $form->decimal('country', 'Position')->rules('required');
-            })->when('Movie', function (Form $form) {
-                $form->select('category', __('Category'))
-                    ->options(
-                        Utils::$CATEGORIES
-                    )->rules('required');
-            });
+
+        if ($form->isCreating()) {
+            $active_serrie = SeriesMovie::where('is_active', 'Yes')->first();
+            $has_active_series = $active_serrie ? 'Series' : 'Movie';
+
+
+            $form->radio('genre', __('VJ'))
+                ->options(
+                    Utils::$JV
+                )->rules('required');
+            $form->radio('type', __('Type'))
+                ->options([
+                    'Movie' => 'Movie',
+                    'Series' => 'Series',
+                ])
+                ->when('Series', function (Form $form) {
+                    $active_serrie = SeriesMovie::where('is_active', 'Yes')->first();
+                    $serrie_id = null;
+                    $number_of_episodes = 0;
+                    $count = MovieModel::where('category_id', $active_serrie->id)->count();
+                    if ($count > 0) {
+                        $number_of_episodes = $count;
+                    }
+                    $number_of_episodes += 1;
+                    if ($active_serrie) {
+                        $serrie_id = $active_serrie->id;
+                    }
+                    $form->select('category_id', __('Select Series'))->rules('required')
+                        ->options(SeriesMovie::all()->pluck('title', 'id'))
+                        ->default($serrie_id);
+                    $form->decimal('country', 'Position')->rules('required')
+                        ->default($number_of_episodes);
+                })->when('Movie', function (Form $form) {
+                    $form->select('category', __('Category'))
+                        ->options(
+                            Utils::$CATEGORIES
+                        )->rules('required');
+                })->default($has_active_series);
+        } else {
+
+            $form->radio('genre', __('VJ'))
+                ->options(
+                    Utils::$JV
+                )->rules('required');
+            $form->radio('type', __('Type'))
+                ->options([
+                    'Movie' => 'Movie',
+                    'Series' => 'Series',
+                ])
+                ->when('Series', function (Form $form) {
+                    $form->select('category_id', __('Select Series'))->rules('required')
+                        ->options(SeriesMovie::all()->pluck('title', 'id'));
+                    $form->decimal('country', 'Position')->rules('required');
+                })->when('Movie', function (Form $form) {
+                    $form->select('category', __('Category'))
+                        ->options(
+                            Utils::$CATEGORIES
+                        )->rules('required');
+                });
+        }
 
 
         $form->radio('director', __('Advanced Information'))
@@ -258,6 +292,13 @@ class MovieModelController extends AdminController
                 $form->decimal('size', __('Size'));
             })->default('Basic');
         $form->disableReset();
+        $form->radio('status', __('Status'))
+            ->options([
+                'Active' => 'Active',
+                'Inactive' => 'Inactive',
+            ])
+            ->default('Active')
+            ->rules('required'); 
         return $form;
     }
 }

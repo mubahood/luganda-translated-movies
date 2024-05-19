@@ -32,7 +32,7 @@ if (!isset($body)) {
         }
 
         .header {
-            background-color: #00A65A;
+            background-color: #a60000;
             color: #fff;
             text-align: center;
             padding: 10px;

@@ -343,13 +343,12 @@ class ApiController extends BaseController
 
             $mail_body = <<<EOD
             <p>Dear {$u->name},</p>
-            <p>Your password reset code is <b>$code</b></p>
+            <p>Your password reset code is <b><code>$code</code></b></p>
             <p>Thank you.</p>
             EOD;
-
             $data['email'] = $u->email;
             $date = date('Y-m-d');
-            $data['subject'] = env('APP_NAME') . " - Password Reset Code";
+            $data['subject'] = "Password Reset Code - " . env('APP_NAME');
             $data['body'] = $mail_body;
             $data['data'] = $data['body'];
             $data['name'] = $u->name;
@@ -360,7 +359,7 @@ class ApiController extends BaseController
             $u = User::find($u->id);
         } catch (\Exception $e) {
             return Utils::error($e->getMessage());
-        } 
+        }
 
         Utils::success([
             'user' => $u,

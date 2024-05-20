@@ -5,7 +5,7 @@ use App\Models\Utils;
 
 Encore\Admin\Form::forget(['map', 'editor']);
 
-// open the file "demosaved.csv" for writing
+/* // open the file "demosaved.csv" for writing
 $class_name = 'S.6';
 $file = fopen($class_name . '.csv', 'w');
 $names_1 = 'BUBIIKE CAROLINE,KAGINO ERIC,KANA ROMAN,KASAJJA GEOFREY,KAWALA PHIONA,KIBUTO IVAN,KIIGE HILLARY,KIRABIRA  FATUMA,KISIBO  MUSITAFA,KITUTU ISAAC,KYOMYA ABUDALLAH,LUBOGO WILSON,MALOLE BRIAN,MUGOYA GEOFREY,MUKOSE INNOCENT TITUS,MUKOSE DAN,MUNDU ROMAN,MUWAYI BENARD,NANGOBI PRETTY,TIBAWULA SANDRA,WAISWA EMMA,WALUBE SADAT,WANKYA BRIAN';
@@ -43,7 +43,7 @@ foreach ($data as $row) {
 // Close the file
 fclose($file);
 
-die("done");
+die("done"); */
 
 //Utils::system_boot();
 /* foreach (MovieModel::all() as $key => $value) {

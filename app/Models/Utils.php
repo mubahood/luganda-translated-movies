@@ -14,33 +14,33 @@ class Utils
 {
 
 
-       //mail sender
-       public static function mail_sender($data)
-       {
-           try {
-               Mail::send(
-                   'mails/mail-1',
-                   [
-                       'body' => $data['body'],
-                       'title' => $data['subject']
-                   ],
-                   function ($m) use ($data) {
-                       $m->to($data['email'], $data['name'])
-                           ->subject($data['subject']);
-                       $m->from(env('MAIL_FROM_ADDRESS'), $data['subject']);
-                   }
-               );
-           } catch (\Throwable $th) {
-               $msg = 'failed';
-               throw $th;
-           }
-       }
+    //mail sender
+    public static function mail_sender($data)
+    {
+        try {
+            Mail::send(
+                'mails/mail-1',
+                [
+                    'body' => $data['body'],
+                    'title' => $data['subject']
+                ],
+                function ($m) use ($data) {
+                    $m->to($data['email'], $data['name'])
+                        ->subject($data['subject']);
+                    $m->from(env('MAIL_FROM_ADDRESS'), $data['subject']);
+                }
+            );
+        } catch (\Throwable $th) {
+            $msg = 'failed';
+            throw $th;
+        }
+    }
 
-    
+
     //coenvet secondsToMinutes 
     public static function secondsToMinutes($seconds)
     {
-        if($seconds == 0){
+        if ($seconds == 0) {
             return '0:00';
         }
         $minutes = floor($seconds / 60);
@@ -935,7 +935,7 @@ class Utils
         // ini_set('upload_max_filesize', '100M');
         // self::get_remote_movies_links();
         // self::download_pending_movies();
-        self::process_thumbs();
+        //self::process_thumbs();
 
         //schools
         // self::get_school_links(1); //Nursery schools
@@ -947,9 +947,89 @@ class Utils
 
         //self::get_past_paper_cats();
         //self::get_past_paper_pages();
-        Utils::download_sharability_posts();
+        //Utils::download_sharability_posts();
+
+
+        self::get_remote_movies_links_2();
+        self::download_pending_movies();
+
         die('-done-');
         return 'Done';
+    }
+
+    public static function get_remote_movies_links_2()
+    {
+
+
+
+
+        $url = 'https://translatedfilms.com/videos/';
+
+        $html = null;
+        try {
+            $html = file_get_html($url);
+        } catch (\Throwable $th) {
+            /* $new_scrap->status = 'error';
+            $new_scrap->error = 'file_get_html';
+            $new_scrap->error_message = $th->getMessage();
+            $new_scrap->save(); */
+        }
+        if ($html == null) {
+            return false;
+        }
+
+        $base_url = $url;
+        $movies_count = 0;
+        // find all link
+        try {
+            foreach ($html->find('a') as $e) {
+                //check if last does not contain .mp4 or .mkv or .avi or .flv or .wmv or .mov or .webm and continue
+                if (!str_contains($e->href, '.mp4') && !str_contains($e->href, '.mkv') && !str_contains($e->href, '.avi') && !str_contains($e->href, '.flv') && !str_contains($e->href, '.wmv') && !str_contains($e->href, '.mov') && !str_contains($e->href, '.webm')) {
+                    continue;
+                }
+                $movies_count++;
+                $url = $base_url . $e->href;
+                //check if there is no MovieModel with this url
+                $movie = MovieModel::where('external_url', $url)->first();
+                if ($movie != null) {
+                    continue;
+                }
+                $movie = new MovieModel();
+                $movie->url = null;
+                $movie->external_url = $url;
+                $movie->title = self::get_movie_title_from_url($url);
+                //check if title contains season or series or episode and make type to series else make type to movie
+                $temp_title = strtolower($movie->title);
+                if (str_contains($temp_title, 'season') || str_contains($temp_title, 'series') || str_contains($temp_title, 'episode')) {
+                    $movie->type = 'series';
+                } else {
+                    $movie->type = 'movie';
+                }
+                $movie->status = 'pending';
+                $movie->downloads_count = 0;
+                $movie->views_count = 0;
+                $movie->likes_count = 0;
+                $movie->dislikes_count = 0;
+                $movie->comments_count = 0;
+                $movie->video_is_downloaded_to_server = 'no';
+                $movie->save();
+            }
+        } catch (\Throwable $th) {
+            /* $new_scrap->status = 'error';
+            $new_scrap->error = 'find all link';
+            $new_scrap->error_message = $th->getMessage();
+            $new_scrap->save(); */
+        }
+
+        /* //size of content from url
+        $new_scrap->datae = strlen($html);
+        //to mb
+        $new_scrap->datae = $new_scrap->datae / 1000000;
+        $new_scrap->datae = round($new_scrap->datae, 2);
+        $new_scrap->title = $movies_count;
+        $new_scrap->status = 'success';
+        $new_scrap->save(); */
+        return true;
     }
 
     public static function download_sharability_posts()

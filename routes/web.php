@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Gen;
+use App\Models\MovieModel;
 use App\Models\Utils;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,36 @@ Route::post('/africa', function () {
     echo '<Response>
             <Play url="https://www2.cs.uic.edu/~i101/SoundFiles/gettysburg10.wav"/>
     </Response>';
+    die();
+});
+Route::get('/make-tsv', function () {
+    $exists = [];
+    foreach (MovieModel::all() as $key => $value) {
+        //check if file exists
+        // $value->url = 'videos/test.mp4';
+        if ($value->url == null) continue;
+        if (strlen($value->url) < 5) continue;
+        $path = public_path('storage/' . $value->url);
+        if (!file_exists($path)) {
+            echo $value->title . ' - does not exist<br>';
+            continue;
+        }
+        //echo $value->title . ' - do exists<br>';
+        $exists[] = url('storage/' . $value->url);
+    }
+
+    //create a tsv file
+    $path = public_path('storage/movies.tsv');
+    $file = fopen($path, 'w');
+    //put only data in $exists
+    foreach ($exists as $key => $value) {
+        fputcsv($file, [
+            $value
+        ], "\t");
+    }
+    fclose($file);
+    //download the file link echo
+    echo '<a href="' . url('storage/movies.tsv') . '">Download</a>';
     die();
 });
 Route::get('/down', function () {

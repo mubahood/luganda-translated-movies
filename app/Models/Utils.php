@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 
 include_once('simple_html_dom.php');
@@ -13,6 +14,42 @@ include_once('simple_html_dom.php');
 class Utils
 {
 
+
+    /**
+     * Fetches items from a specified bucket.
+     *
+     * @param string $bucketPath The relative path of the bucket.
+     * @return array|null An array of items in the bucket, or null if an error occurred.
+     */
+    public static function getBucketItems($bucketPath) 
+    {
+        // Retrieve the bearer token from the environment
+        $bearerToken = env('GOOGLE_CLOUD_STORAGE_BEARER_TOKEN');
+
+        // Google Cloud Storage API endpoint to list items in the specified bucket
+        $url = 'https://storage.googleapis.com/storage/v1/b/' . $bucketPath . '/o';
+
+        // Make the HTTP GET request with the authorization header
+        $response = Http::withToken($bearerToken)->get($url);
+
+        // Check if the request was successful
+        if ($response->successful()) {
+            $data = $response->json();
+            if (isset($data['items'])) {
+                $items = [];
+                foreach ($data['items'] as $item) {
+                    $items[] = $item;
+                }
+                return $items;
+            } else {
+                echo "No items found in the bucket.\n";
+                return null;
+            }
+        } else {
+            echo "Failed to retrieve items from the bucket.\n";
+            return null;
+        }
+    }
 
     //mail sender
     public static function mail_sender($data)
@@ -950,7 +987,7 @@ class Utils
         //Utils::download_sharability_posts();
 
 
-        self::get_remote_movies_links_2();
+        //self::get_remote_movies_links_2();
         self::download_pending_movies();
 
         die('-done-');

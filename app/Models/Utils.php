@@ -988,7 +988,7 @@ class Utils
 
 
         //self::get_remote_movies_links_2();
-        self::download_pending_movies();
+        //self::download_pending_movies();
 
         die('-done-');
         return 'Done';
@@ -2639,6 +2639,7 @@ class Utils
 
     public static function download_pending_movies()
     {
+        return;
         //get video that is now video_is_downloaded_to_server_status is yes
         $video_is_downloaded_to_server_status_yes = MovieModel::where([
             'video_is_downloaded_to_server_status' => 'downloading',

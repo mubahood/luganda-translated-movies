@@ -29,7 +29,12 @@ class Utils
 
 
         $items = Utils::getBucketItems('mubahood-movies');
-        $movies = []; 
+        //if(not $items return empty array)
+        if ($items == null) {
+            return [];
+        }
+        dd(count($items));
+        $movies = [];
         foreach ($items as $item) {
             $name = $item['name'];
             $local_video_link = $name;
@@ -80,7 +85,8 @@ class Utils
         $bearerToken = env('GOOGLE_CLOUD_STORAGE_BEARER_TOKEN');
 
         // Google Cloud Storage API endpoint to list items in the specified bucket
-        $url = 'https://storage.googleapis.com/storage/v1/b/' . $bucketPath . '/o';
+        $maxResults = 10000;
+        $url = 'https://storage.googleapis.com/storage/v1/b/' . $bucketPath . '/o?maxResults=' . $maxResults;
 
         // Make the HTTP GET request with the authorization header
         $response = Http::withToken($bearerToken)->get($url);

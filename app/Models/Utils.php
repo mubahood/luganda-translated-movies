@@ -33,7 +33,7 @@ class Utils
         if ($items == null) {
             return [];
         }
-        dd(count($items));
+        //dd(count($items));
         $movies = [];
         foreach ($items as $item) {
             $name = $item['name'];

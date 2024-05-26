@@ -49,7 +49,7 @@ class MovieModelController extends AdminController
             ->display(function ($_url) {
                 if (strlen($_url) < 2) {
                     return 'N/A';
-                }
+                } 
                 //check if the url contains http and return it
                 if (strpos($_url, 'http') !== false) {
                     return '<a href="' . $_url . '" target="_blank">' . 'DOWNLOAD' . '</a>';

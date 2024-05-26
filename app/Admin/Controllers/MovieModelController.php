@@ -235,7 +235,7 @@ https://storage.googleapis.com/mubahood-movies/m.schooldynamics.ug/storage/video
                 'url' => 'URL',
             ])
             ->when('file', function (Form $form) {
-                $form->file('url', __('Movie file'))->removable();
+                $form->file('local_video_link', __('Movie file'))->removable();
             })->when('url', function (Form $form) {
                 $form->text('url', __('Movie url'));
             })->rules('required');

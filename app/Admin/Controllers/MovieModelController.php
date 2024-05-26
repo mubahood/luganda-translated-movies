@@ -138,7 +138,10 @@ class MovieModelController extends AdminController
             ['videoWidth' => 720, 'videoHeight' => 480]
         )->sortable();
 
-        $grid->column('external_url', __('Source Link'))->sortable()->video(['videoWidth' => 720, 'videoHeight' => 480]);
+        $grid->column('external_url', __('Source Link'))->sortable()
+        ->display(function ($external_url) {
+            return '<a href="' . $external_url . '" target="_blank">' . 'VIEW' . '</a>';
+        });
 
         $grid->column('plays_on_google', __('Plays on google'))->sortable()
             ->filter([

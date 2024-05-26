@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '78c889d969261d3e1d5251a635f14803d4cce9cc',
+        'reference' => '23a907d7e574343957bb40bcad0e730abba584f2',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -433,6 +433,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'laravel-admin-ext/media-player' => array(
+            'pretty_version' => 'v1.1',
+            'version' => '1.1.0.0',
+            'reference' => '398c10efd40a8f6b03fade0aa9cb0ddf1a72a75e',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../laravel-admin-ext/media-player',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'laravel/framework' => array(
             'pretty_version' => 'v10.41.0',
             'version' => '10.41.0.0',
@@ -445,7 +454,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '78c889d969261d3e1d5251a635f14803d4cce9cc',
+            'reference' => '23a907d7e574343957bb40bcad0e730abba584f2',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

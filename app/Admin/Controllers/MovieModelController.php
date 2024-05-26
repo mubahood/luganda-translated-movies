@@ -31,7 +31,7 @@ class MovieModelController extends AdminController
                 'status' => 'Inactive',
             ]); */
         $grid = new Grid(new MovieModel());
-        $grid->quickSearch('title');
+        $grid->quickSearch('title', 'url', 'external_url', 'local_video_link');
         $grid->model()->orderBy('updated_at', 'desc');
         $grid->disableBatchActions();
         $grid->column('id', __('Id'))->sortable();
@@ -50,10 +50,10 @@ class MovieModelController extends AdminController
                 if (strlen($_url) < 2) {
                     return 'N/A';
                 }
-                //check if has http and return the way it is
+                //check if the url contains http and return it
                 if (strpos($_url, 'http') !== false) {
-                    return '<a href="' . $_url . '" target="_blank">' . 'VIEW' . '</a>';
-                }
+                    return '<a href="' . $_url . '" target="_blank">' . 'DOWNLOAD' . '</a>';
+                } 
 
                 $_url = url('/storage/' . $_url);
                 return '<a href="' . $_url . '" target="_blank">' . 'VIEW' . '</a>';
@@ -128,13 +128,32 @@ class MovieModelController extends AdminController
         $grid->column('category_id', __('Category id'))->hide();
         $grid->column('status', __('Status'))
             ->filter([
-                'yes' => 'Yes',
-                'no' => 'No',
-                'Failed' => 'Failed',
-            ])->sortable();
-
+                'Active' => 'Active',
+                'Inactive' => 'Inactive',
+            ])->sortable()
+            ->editable('select', [
+                'Active' => 'Active',
+                'Inactive' => 'Inactive',
+            ]); 
+        $grid->column('local_video_link', __('Video'))->video(
+            ['videoWidth' => 720, 'videoHeight' => 480]
+        )->sortable();
+        $grid->column('plays_on_google', __('Plays on google'))->sortable()
+            ->filter([
+                'Yes' => 'Yes',
+                'No' => 'No',
+            ])->editable('select', [
+                'Yes' => 'Yes',
+                'No' => 'No',
+            ]); 
         return $grid;
-    }
+    }/* 
+https://storage.googleapis.com/mubahood-movies/m.schooldynamics.ug/storage/videos/1716608729_78492.mp4
+https://storage.googleapis.com/mubahood-movies/m.schooldynamics.ug/storage/videos/1716608729_78492.mp4
+
+
+
+    */
 
     /**
      * Make a show builder.
@@ -315,6 +334,13 @@ class MovieModelController extends AdminController
             ])
             ->default('Active')
             ->rules('required');
+        //plays_on_google
+        $form->radio('plays_on_google', __('Plays on google'))
+            ->options([
+                'Yes' => 'Yes',
+                'No' => 'No',
+            ])
+            ->default('No'); 
         return $form;
     }
 }

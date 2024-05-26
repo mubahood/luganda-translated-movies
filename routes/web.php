@@ -53,7 +53,16 @@ Route::post('/africa', function () {
 });
 Route::get('/make-tsv', function () {
     $exists = [];
-    foreach (MovieModel::all() as $key => $value) {
+    foreach (MovieModel::where([
+        'uploaded_to_from_google' => 'No',
+    ])->get() as $key => $value) {
+
+        //check if not contain ranslatedfilms.com and continue
+        if (!(strpos($value->external_url, 'ranslatedfilms.com') !== false)) {
+            continue;
+        }
+        $exists[] = $value->external_url;
+        continue;
         //check if file exists
         // $value->url = 'videos/test.mp4';
         if ($value->url == null) continue;
@@ -68,8 +77,13 @@ Route::get('/make-tsv', function () {
     }
 
     //create a tsv file
-    $path = public_path('storage/movies.tsv');
+    $path = public_path('storage/movies-1.tsv');
     $file = fopen($path, 'w');
+    //add TsvHttpData-1.0 on top of the tsv file content
+    fputcsv($file, [
+        'TsvHttpData-1.0'
+    ], "\t");
+
     //put only data in $exists
     foreach ($exists as $key => $value) {
         fputcsv($file, [
@@ -78,7 +92,7 @@ Route::get('/make-tsv', function () {
     }
     fclose($file);
     //download the file link echo
-    echo '<a href="' . url('storage/movies.tsv') . '">Download</a>';
+    echo '<a href="' . url('storage/movies-1.tsv') . '">Download</a>';
     die();
 });
 Route::get('/down', function () {

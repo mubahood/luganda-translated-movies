@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class Utils
 
 
         $items = Utils::getBucketItems('mubahood-movies');
-        $movies = [];
+        $movies = []; 
         foreach ($items as $item) {
             $name = $item['name'];
             $local_video_link = $name;
@@ -58,6 +59,7 @@ class Utils
             $movie->downloaded_from_google = 'Yes';
             $movie->uploaded_to_from_google = 'Yes';
             $movie->local_video_link = $local_video_link;
+            $movie->url = $item['mediaLink'];
             $movie->save();
             echo $last_name . ' downloaded<br>';
         }
@@ -98,7 +100,44 @@ class Utils
             }
         } else {
             echo "Failed to retrieve items from the bucket.\n";
+            dd($response);
             return null;
+        }
+    }
+
+
+    public static function refreshAccessToken()
+    {
+        // Read the credentials from the .env file
+        $clientId = env('GOOGLE_CLIENT_ID');
+        $clientSecret = env('GOOGLE_CLIENT_SECRET');
+        $refreshToken = env('GOOGLE_REFRESH_TOKEN');
+
+        $tokenUrl = "https://oauth2.googleapis.com/token";
+
+        // Prepare the POST request parameters
+        $params = [
+            "client_id" => $clientId,
+            "client_secret" => $clientSecret,
+            "refresh_token" => $refreshToken,
+            "grant_type" => "refresh_token"
+        ];
+
+        try {
+            // Make the POST request using Laravel's Http client
+            $response = Http::asForm()->post($tokenUrl, $params);
+
+            if ($response->successful()) {
+                $tokenInfo = $response->json();
+                return [
+                    'access_token' => $tokenInfo['access_token'],
+                    'expires_in' => $tokenInfo['expires_in']
+                ];
+            } else {
+                throw new Exception('Failed to refresh token: ' . $response->body());
+            }
+        } catch (Exception $e) {
+            throw new Exception('Error refreshing access token: ' . $e->getMessage());
         }
     }
 

@@ -50,6 +50,11 @@ class MovieModelController extends AdminController
                 if (strlen($_url) < 2) {
                     return 'N/A';
                 }
+                //check if has http and return the way it is
+                if (strpos($_url, 'http') !== false) {
+                    return '<a href="' . $_url . '" target="_blank">' . 'VIEW' . '</a>';
+                }
+
                 $_url = url('/storage/' . $_url);
                 return '<a href="' . $_url . '" target="_blank">' . 'VIEW' . '</a>';
             });

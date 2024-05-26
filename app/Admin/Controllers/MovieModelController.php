@@ -31,6 +31,7 @@ class MovieModelController extends AdminController
                 'status' => 'Inactive',
             ]); */
         $grid = new Grid(new MovieModel());
+
         $grid->quickSearch('title', 'url', 'external_url', 'local_video_link');
         $grid->model()->orderBy('updated_at', 'desc');
         $grid->disableBatchActions();
@@ -44,19 +45,9 @@ class MovieModelController extends AdminController
                 return date('Y-m-d H:i:s', strtotime($updated_at));
             })->sortable()->hide();
         $grid->column('title', __('Title'))->sortable();
-        $grid->column('url', __('Url'))->sortable()
-            ->display(function ($_url) {
-                if (strlen($_url) < 2) {
-                    return 'N/A';
-                } 
-                //check if the url contains http and return it
-                if (strpos($_url, 'http') !== false) {
-                    return '<a href="' . $_url . '" target="_blank">' . 'DOWNLOAD' . '</a>';
-                } 
 
-                $_url = url('/storage/' . $_url);
-                return '<a href="' . $_url . '" target="_blank">' . 'VIEW' . '</a>';
-            });
+        $grid->column('url', __('Url'))->sortable()
+            ->video(['videoWidth' => 720, 'videoHeight' => 480]);
 
         $grid->column('thumbnail_url', __('Thumbnail'))
             ->image('', 50, 50)->sortable();
@@ -95,6 +86,7 @@ class MovieModelController extends AdminController
         $grid->column('dislikes_count', __('Dislikes count'))->hide();
         $grid->column('comments_count', __('Comments count'))->hide();
         $grid->column('comments', __('Comments'))->hide();
+
         $grid->column('video_is_downloaded_to_server', __('Downloaded'))->sortable()
             ->filter([
                 'yes' => 'Yes',
@@ -109,6 +101,7 @@ class MovieModelController extends AdminController
                 return date('Y-m-d H:i:s', strtotime($video_downloaded_to_server_end_time));
             })->sortable()
             ->hide();
+
         $grid->column('video_downloaded_to_server_duration', __('Video downloaded to server duration'))
             ->display(function ($video_downloaded_to_server_duration) {
                 //convert seconds to minutes
@@ -133,15 +126,21 @@ class MovieModelController extends AdminController
             ->editable('select', [
                 'Active' => 'Active',
                 'Inactive' => 'Inactive',
-            ]); 
-        $grid->column('local_video_link', __('Video'))->video(
-            ['videoWidth' => 720, 'videoHeight' => 480]
-        )->sortable();
+            ]);
+
+        $grid->column('local_video_link', __('Local Video'))
+            ->display(function ($local_video_link) {
+                if ($local_video_link == null || $local_video_link == '') {
+                    return 'N/A';
+                }
+                return '<a title="' . $local_video_link . '" href="'  . $local_video_link . '" target="_blank">' . 'VIEW' . '</a>';
+            })->sortable();
+        return $grid;
 
         $grid->column('external_url', __('Source Link'))->sortable()
-        ->display(function ($external_url) {
-            return '<a href="' . $external_url . '" target="_blank">' . 'VIEW' . '</a>';
-        });
+            ->display(function ($external_url) {
+                return '<a href="' . $external_url . '" target="_blank">' . 'VIEW' . '</a>';
+            });
 
         $grid->column('plays_on_google', __('Plays on google'))->sortable()
             ->filter([
@@ -150,7 +149,7 @@ class MovieModelController extends AdminController
             ])->editable('select', [
                 'Yes' => 'Yes',
                 'No' => 'No',
-            ]); 
+            ]);
         return $grid;
     }/* 
 https://storage.googleapis.com/mubahood-movies/m.schooldynamics.ug/storage/videos/1716608729_78492.mp4
@@ -345,7 +344,7 @@ https://storage.googleapis.com/mubahood-movies/m.schooldynamics.ug/storage/video
                 'Yes' => 'Yes',
                 'No' => 'No',
             ])
-            ->default('No'); 
+            ->default('No');
         return $form;
     }
 }

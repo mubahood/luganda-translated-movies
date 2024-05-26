@@ -67,7 +67,6 @@ class MovieModel extends Model
             $names = explode('/', $value);
             if (count($names) > 1) {
                 $value = $names[count($names) - 1];
-
                 DB::table('movie_models')
                     ->where('id', $this->id)
                     ->update([
@@ -93,5 +92,19 @@ class MovieModel extends Model
         //http://localhost:8888/movies-new/make-tsv
 
         return ucwords($value);
+    }
+
+    //getter for url
+    public function getUrlAttribute($value)
+    {
+        if ($value == null || $value == '' || strlen($value) < 5) {
+            return '';
+        }
+
+        //check if does not contain google and return this.external_url
+        if (!(strpos($value, 'google') !== false)) {
+            return $this->external_url;
+        }
+        return $value;
     }
 }

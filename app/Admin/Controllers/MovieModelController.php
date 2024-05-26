@@ -44,7 +44,6 @@ class MovieModelController extends AdminController
                 return date('Y-m-d H:i:s', strtotime($updated_at));
             })->sortable()->hide();
         $grid->column('title', __('Title'))->sortable();
-        $grid->column('external_url', __('External URL'))->sortable()->hide();
         $grid->column('url', __('Url'))->sortable()
             ->display(function ($_url) {
                 if (strlen($_url) < 2) {
@@ -138,6 +137,9 @@ class MovieModelController extends AdminController
         $grid->column('local_video_link', __('Video'))->video(
             ['videoWidth' => 720, 'videoHeight' => 480]
         )->sortable();
+
+        $grid->column('external_url', __('Source Link'))->sortable()->video(['videoWidth' => 720, 'videoHeight' => 480]);
+
         $grid->column('plays_on_google', __('Plays on google'))->sortable()
             ->filter([
                 'Yes' => 'Yes',

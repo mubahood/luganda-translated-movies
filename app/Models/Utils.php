@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 
@@ -14,6 +15,12 @@ include_once('simple_html_dom.php');
 
 class Utils
 {
+
+
+    public static function escapeString($string)
+    {
+        return DB::getPdo()->quote($string);
+    }
 
 
     //download movies from google

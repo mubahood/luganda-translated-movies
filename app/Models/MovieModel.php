@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Dflydev\DotAccessData\Util;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -66,13 +67,11 @@ class MovieModel extends Model
             $names = explode('/', $value);
             if (count($names) > 1) {
                 $value = $names[count($names) - 1];
-                //escape  for ssql
-                $this->title = $value;
-                $this->save();
-/*                 $value = str_replace("'", "\'", $value);
+                //real string escape for the title
+                $value = Utils::escapeString($value);
                 $sql = "UPDATE movie_models SET title = '$value' WHERE id = {$this->id}";
-                DB::update($sql); */
-                return $value;
+                DB::update($sql);
+                return $value; 
             }
 
             /* $new_title = str_replace('https://translatedfilms com/videos/', '', $value);

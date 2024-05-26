@@ -66,8 +66,12 @@ class MovieModel extends Model
             $names = explode('/', $value);
             if (count($names) > 1) {
                 $value = $names[count($names) - 1];
+                //escape  for ssql
+                $this->title = $value;
+                $this->save();
+/*                 $value = str_replace("'", "\'", $value);
                 $sql = "UPDATE movie_models SET title = '$value' WHERE id = {$this->id}";
-                DB::update($sql);
+                DB::update($sql); */
                 return $value;
             }
 

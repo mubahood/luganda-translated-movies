@@ -15,13 +15,64 @@ class Utils
 {
 
 
+    //download movies from google
+    public static function download_movies_from_google()
+    {
+        $name = "m.schooldynamics.ug/storage/videos/1707574562_74652.mp4";
+        $names = explode('/', $name);
+        if (count($names) > 1) {
+            $last_name = $names[count($names) - 1];
+        } else {
+            $last_name = $name;
+        }
+
+
+        $items = Utils::getBucketItems('mubahood-movies');
+        $movies = [];
+        foreach ($items as $item) {
+            $name = $item['name'];
+            $local_video_link = $name;
+            $names = explode('/', $name);
+            if (count($names) > 1) {
+                $last_name = $names[count($names) - 1];
+            } else {
+                $last_name = $name;
+            }
+            $movie = MovieModel::where('url', 'like', '%' . $last_name . '%')
+                ->where('downloaded_from_google', 'No')
+                ->first();
+            if ($movie == null) {
+                //echo $last_name . ' not found<br>';
+                continue;
+            }
+            $path = public_path('storage/' . $movie->url);
+            if (file_exists($path)) {
+                //delete the file
+                try {
+                    unlink($path);
+                } catch (\Throwable $th) {
+                    echo $th->getMessage();
+                }
+            }
+
+            $movie->downloaded_from_google = 'Yes';
+            $movie->uploaded_to_from_google = 'Yes';
+            $movie->local_video_link = $local_video_link;
+            $movie->save();
+            echo $last_name . ' downloaded<br>';
+        }
+        die('done');
+        return $movies;
+    }
+
+
     /**
      * Fetches items from a specified bucket.
      *
      * @param string $bucketPath The relative path of the bucket.
      * @return array|null An array of items in the bucket, or null if an error occurred.
      */
-    public static function getBucketItems($bucketPath) 
+    public static function getBucketItems($bucketPath)
     {
         // Retrieve the bearer token from the environment
         $bearerToken = env('GOOGLE_CLOUD_STORAGE_BEARER_TOKEN');

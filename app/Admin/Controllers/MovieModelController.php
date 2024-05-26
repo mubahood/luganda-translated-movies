@@ -34,7 +34,7 @@ class MovieModelController extends AdminController
         $grid->quickSearch('title');
         $grid->model()->orderBy('updated_at', 'desc');
         $grid->disableBatchActions();
-        $grid->column('id', __('Id'))->sortable(); 
+        $grid->column('id', __('Id'))->sortable();
         $grid->column('created_at', __('Created'))
             ->display(function ($created_at) {
                 return date('Y-m-d H:i:s', strtotime($created_at));
@@ -58,6 +58,17 @@ class MovieModelController extends AdminController
             ->image('', 50, 50)->sortable();
         $grid->column('description', __('Description'))->hide();
         $grid->column('year', __('Year'))->sortable()->hide();
+        $grid->column('downloaded_from_google', __('from google'))
+            ->sortable()
+            ->filter([
+                'Yes' => 'Yes',
+                'No' => 'No',
+            ])
+            ->label([
+                'Yes' => 'success',
+                'No' => 'danger',
+            ]);
+
         /*         
         $grid->column('rating', __('Rating'));
         $grid->column('duration', __('Duration'));

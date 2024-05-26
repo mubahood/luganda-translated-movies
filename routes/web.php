@@ -3,6 +3,7 @@
 use App\Models\Gen;
 use App\Models\MovieModel;
 use App\Models\Utils;
+use Dflydev\DotAccessData\Util;
 use Illuminate\Support\Facades\Route;
 
 
@@ -15,6 +16,9 @@ Route::get('/home', function () {
 */
 
 
+Route::get('sync-with-google', function () {
+    Utils::download_movies_from_google();
+});
 Route::get('/gen-form', function () {
     die(Gen::find($_GET['id'])->make_forms());
 })->name("gen-form");

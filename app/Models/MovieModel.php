@@ -63,15 +63,19 @@ class MovieModel extends Model
     {
         //check if title contains translatedfilms
         if (strpos($value, 'translatedfilms') !== false) {
-            
+
             $names = explode('/', $value);
             if (count($names) > 1) {
                 $value = $names[count($names) - 1];
-                //real string escape for the title
-                $value = Utils::escapeString($value);
-                $sql = "UPDATE movie_models SET title = '$value' WHERE id = {$this->id}";
-                DB::update($sql);
-                return $value; 
+
+                DB::table('movie_models')
+                    ->where('id', $this->id)
+                    ->update([
+                        'title' => $value
+                    ]);
+
+
+                return $value;
             }
 
             /* $new_title = str_replace('https://translatedfilms com/videos/', '', $value);
@@ -85,7 +89,7 @@ class MovieModel extends Model
             dd($sql);
             DB::update($sql);
             return $new_title; */
-        } 
+        }
         //http://localhost:8888/movies-new/make-tsv
 
         return ucwords($value);

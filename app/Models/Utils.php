@@ -51,7 +51,7 @@ class Utils
             } else {
                 $last_name = $name;
             }
-            $movie = MovieModel::where('url', 'like', '%' . $last_name . '%')
+            $movie = MovieModel::where('external_url', 'like', '%' . $last_name . '%')
                 ->where('downloaded_from_google', 'No')
                 ->first();
             if ($movie == null) {
@@ -90,7 +90,7 @@ class Utils
     {
         // Retrieve the bearer token from the environment
         ///$bearerToken = env('GOOGLE_CLOUD_STORAGE_BEARER_TOKEN');
-        $bearerToken = "ya29.a0AXooCgt0hxL39RZiilVAiNx080Ka74oQn3TY-cwLnJGceMenXs92sp57wBpXF7P3ZxuZletDotoy-32LWR1vqi_OgOZjdA5x1h0r-tWBYtLSDjEmT5ClvZR6qtIBZSxvieU7hMyRTXf3qd4SwdolcztlxjijWRzOJRQ1aCgYKATESARMSFQHGX2MioCJ1GzgI3dPvL6b7yZ2IqA0171";
+        $bearerToken = "ya29.a0AXooCgskgDuGJ_Lf38WZRdfik_fWXSseSUgMxI-o4N8SNoo6E9W1RY-KB11sGahoJy0Em6KXd7WB8Hp4XMMJH6_R-m-6jsMa0bJO6C0GH2wK039jueizDTtV40sjB3b74HFp8EvB0iAKw53khBDjRJCeiZFp6pbOJwaCgYKAbUSARMSFQHGX2MiBXJUS2YjTYxHYTihG7Fejg0169";
 
         // Google Cloud Storage API endpoint to list items in the specified bucket
         $maxResults = 10000;
@@ -113,7 +113,7 @@ class Utils
                 return null;
             }
         } else {
-            echo "Failed to retrieve items from the bucket.\n";
+            echo "Failed to retrieve items from the bucket 2.\n";
             dd($response);
             return null;
         }

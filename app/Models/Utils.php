@@ -89,7 +89,8 @@ class Utils
     public static function getBucketItems($bucketPath)
     {
         // Retrieve the bearer token from the environment
-        $bearerToken = env('GOOGLE_CLOUD_STORAGE_BEARER_TOKEN');
+        ///$bearerToken = env('GOOGLE_CLOUD_STORAGE_BEARER_TOKEN');
+        $bearerToken = "ya29.a0AXooCgt0hxL39RZiilVAiNx080Ka74oQn3TY-cwLnJGceMenXs92sp57wBpXF7P3ZxuZletDotoy-32LWR1vqi_OgOZjdA5x1h0r-tWBYtLSDjEmT5ClvZR6qtIBZSxvieU7hMyRTXf3qd4SwdolcztlxjijWRzOJRQ1aCgYKATESARMSFQHGX2MioCJ1GzgI3dPvL6b7yZ2IqA0171";
 
         // Google Cloud Storage API endpoint to list items in the specified bucket
         $maxResults = 10000;

@@ -55,8 +55,8 @@ Route::get('download-to-new-server', function () {
                 die();
             }
             echo 'downloading ' . $url . '<br>';
-            //$file = file_get_contents($url);
-            //file_put_contents($path, $file);
+            $file = file_get_contents($url);
+            file_put_contents($path, $file);
             $value->downloaded_to_new_server = 'Yes';
             $value->new_server_path = 'files/' . $filename;
             //$value->save();

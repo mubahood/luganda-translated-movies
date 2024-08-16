@@ -45,10 +45,10 @@ Route::get('download-to-new-server', function () {
             }
             echo 'downloading ' . $url . '<br>';
             $file = file_get_contents($url);
-            file_put_contents($path, $file);
+            //file_put_contents($path, $file);
             $value->downloaded_to_new_server = 'Yes';
             $value->new_server_path = 'files/' . $filename;
-            $value->save();
+            //$value->save();
             $new_link = url('storage/' . $value->new_server_path);
             echo 'downloaded to ' . $new_link . '<hr>';
 

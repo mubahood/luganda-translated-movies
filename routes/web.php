@@ -16,6 +16,51 @@ Route::get('/home', function () {
 */
 
 
+Route::get('download-to-new-server', function () {
+    $movies = MovieModel::where([
+        'uploaded_to_from_google' => 'Yes',
+        'downloaded_to_new_server' => 'No',
+    ])
+        ->orderBy('id', 'desc')
+        ->limit(100)
+        ->get();
+    /* 
+            $table->string('downloaded_to_new_server')->default('No');
+            $table->text('new_server_path')->nullable();
+            server_fail_reason
+*/
+
+    foreach ($movies as $key => $value) {
+        $url = $value->url;
+        $filename = basename($url);
+        $path = public_path('storage/files/' . $filename);
+        if (file_exists($path)) {
+            continue;
+        }
+
+        try {
+            if (Utils::is_localhost_server()) {
+                echo 'localhost server';
+                die();
+            }
+            echo 'downloading ' . $url . '<br>';
+            $file = file_get_contents($url);
+            file_put_contents($path, $file);
+            $value->downloaded_to_new_server = 'Yes';
+            $value->new_server_path = 'files/' . $filename;
+            $value->save();
+            $new_link = url('storage/' . $value->new_server_path);
+            echo 'downloaded to ' . $new_link . '<hr>';
+            die();
+        } catch (\Throwable $th) {
+            $value->downloaded_to_new_server = 'Failed';
+            $value->server_fail_reason = $th->getMessage();
+            $value->save();
+        }
+        break;
+    }
+});
+
 Route::get('sync-with-google', function () {
     Utils::download_movies_from_google();
 });
@@ -53,9 +98,11 @@ Route::post('/africa', function () {
 });
 Route::get('/make-tsv', function () {
     $exists = [];
-    foreach (MovieModel::where([
-        'uploaded_to_from_google' => 'No',
-    ])->get() as $key => $value) {
+    foreach (
+        MovieModel::where([
+            'uploaded_to_from_google' => 'No',
+        ])->get() as $key => $value
+    ) {
 
         //check if not contain ranslatedfilms.com and continue
         if (!(strpos($value->external_url, 'ranslatedfilms.com') !== false)) {

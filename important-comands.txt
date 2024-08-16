@@ -5,7 +5,7 @@ php artisan admin:make MovieLikeController --model=App\\Models\\MovieLike
 php artisan db:seed --class=App\\Models\\MovieLike
 
 
-php artisan make:migration add_plays_on_google_movies --table=movies
+php artisan make:migration add_new_server_fail_reason_movie_models --table=movie_models
 
 
 php artisan migrate

@@ -59,6 +59,7 @@ Route::get('download-to-new-server', function () {
             server_fail_reason
 */
 
+    $i = 0;
     foreach ($movies as $key => $value) {
         $url = $value->url;
 
@@ -71,6 +72,10 @@ Route::get('download-to-new-server', function () {
         }
 
         try {
+            if ($i > 10) {
+                break;
+            }
+            $i++;
             if (Utils::is_localhost_server()) {
                 echo 'localhost server';
                 die();
@@ -113,8 +118,6 @@ Route::get('download-to-new-server', function () {
                 Your browser does not support the video tag. 
             </video>';
             echo $html;
-
-            die();
         } catch (\Throwable $th) {
             $value->downloaded_to_new_server = 'Failed';
             $value->server_fail_reason = $th->getMessage();

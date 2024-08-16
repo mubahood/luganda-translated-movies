@@ -74,7 +74,7 @@ Route::get('download-to-new-server', function () {
 
             //html player for new and old links
             $html = '<video width="320" height="240" controls>
-                <source src="' . url('storage/' . $value->url) . '" type="video/mp4">
+                <source src="' . $value->url . '" type="video/mp4">
                 Your browser does not support the video tag. 
             </video>';
             $html .= '<video width="320" height="240" controls>

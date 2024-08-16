@@ -43,9 +43,12 @@ Route::get('download-to-new-server', function () {
 
     foreach ($movies as $key => $value) {
         $url = $value->url;
-        $filename = basename($url);
+
+        $filename = time() . '-' . rand(1000000, 10000000) . '-' . rand(1000000, 10000000) . '.mp4';
         $path = public_path('storage/files/' . $filename);
         if (file_exists($path)) {
+            $value->downloaded_to_new_server = 'Yes';
+            $value->save();
             continue;
         }
 
@@ -58,8 +61,8 @@ Route::get('download-to-new-server', function () {
             $file = file_get_contents($url);
             file_put_contents($path, $file);
             $value->downloaded_to_new_server = 'Yes';
+            $value->save();
             $value->new_server_path = 'files/' . $filename;
-            //$value->save();
             $new_link = url('storage/' . $value->new_server_path);
             echo 'downloaded to ' . $new_link . '<hr>';
             //check if directtoryy exists
@@ -77,7 +80,7 @@ Route::get('download-to-new-server', function () {
                 <source src="' . $value->url . '" type="video/mp4">
                 Your browser does not support the video tag. 
             </video>';
-            $html .= '<video width="320" height="240" controls>
+            $html .= '<br><video width="320" height="240" controls>
                 <source src="' . $new_link . '" type="video/mp4">
                 Your browser does not support the video tag. 
             </video>';

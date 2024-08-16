@@ -17,6 +17,7 @@ Route::get('/home', function () {
 
 
 Route::get('download-to-new-server', function () {
+    die("time to download");
     $movies = MovieModel::where([
         'uploaded_to_from_google' => 'Yes',
         'downloaded_to_new_server' => 'No',

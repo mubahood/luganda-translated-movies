@@ -50,7 +50,7 @@ Route::get('download-to-new-server', function () {
         'uploaded_to_from_google' => 'Yes',
         'downloaded_to_new_server' => 'No',
     ])
-        ->orderBy('id', 'desc')
+        ->orderBy('id', 'asc')
         ->limit(100)
         ->get();
     /* 

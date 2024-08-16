@@ -17,7 +17,17 @@ Route::get('/home', function () {
 
 
 Route::get('download-to-new-server', function () {
-    die("time to download");
+    //increase the memory limit
+    ini_set('memory_limit', '1024M');
+    //increase the execution time
+    ini_set('max_execution_time', 0);
+    //increase the time limit
+    set_time_limit(0);
+    //increase the time limit
+    ignore_user_abort(true);
+    //die("time to download");
+
+
     $movies = MovieModel::where([
         'uploaded_to_from_google' => 'Yes',
         'downloaded_to_new_server' => 'No',
@@ -52,6 +62,15 @@ Route::get('download-to-new-server', function () {
             //$value->save();
             $new_link = url('storage/' . $value->new_server_path);
             echo 'downloaded to ' . $new_link . '<hr>';
+            //check if directtoryy exists
+            $d_exists = '';
+            if (!file_exists(public_path('storage/files'))) {
+                $d_exists = 'does not exist';
+                mkdir(public_path('storage/files'));
+            } else {
+                $d_exists = 'exists';
+            }
+            echo 'directory ' . $d_exists . '<br>';
 
             //html player for new and old links
             $html = '<video width="320" height="240" controls>

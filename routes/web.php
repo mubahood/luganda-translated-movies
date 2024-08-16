@@ -18,9 +18,9 @@ Route::get('/home', function () {
 
 Route::get('download-to-new-server', function () {
     //increase the memory limit
-    ini_set('memory_limit', '1024M');
+    ini_set('memory_limit', -1);
     //increase the execution time
-    ini_set('max_execution_time', 0);
+    ini_set('max_execution_time', -1);
     //increase the time limit
     set_time_limit(0);
     //increase the time limit

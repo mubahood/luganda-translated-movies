@@ -80,7 +80,6 @@ Route::get('download-to-new-server', function () {
                 echo 'localhost server';
                 die();
             }
-            echo 'downloading ' . $url . '<br>';
 
             $value->downloaded_to_new_server = 'Yes';
             $value->save();
@@ -109,11 +108,11 @@ Route::get('download-to-new-server', function () {
             echo 'directory ' . $d_exists . '<br>';
 
             //html player for new and old links
-            $html = '<video width="320" height="240" controls>
+            $html = '<video width="100" height="120" controls>
                 <source src="' . $value->url . '" type="video/mp4">
                 Your browser does not support the video tag. 
             </video>';
-            $html .= '<br><video width="320" height="240" controls>
+            $html .= '<br><video width="100" height="120" controls>
                 <source src="' . $new_link . '" type="video/mp4">
                 Your browser does not support the video tag. 
             </video>';
@@ -123,10 +122,8 @@ Route::get('download-to-new-server', function () {
             $value->server_fail_reason = $th->getMessage();
             $value->save();
             echo 'failed to download ' . $url . '<br>';
-            echo $th->getMessage();
-            die();
-        }
-        break;
+            echo $th->getMessage(); 
+        } 
     }
 });
 

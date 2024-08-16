@@ -51,11 +51,26 @@ Route::get('download-to-new-server', function () {
             $value->save();
             $new_link = url('storage/' . $value->new_server_path);
             echo 'downloaded to ' . $new_link . '<hr>';
+
+            //html player for new and old links
+            $html = '<video width="320" height="240" controls>
+                <source src="' . url('storage/' . $value->url) . '" type="video/mp4">
+                Your browser does not support the video tag. 
+            </video>';
+            $html .= '<video width="320" height="240" controls>
+                <source src="' . $new_link . '" type="video/mp4">
+                Your browser does not support the video tag. 
+            </video>';
+            echo $html;
+
             die();
         } catch (\Throwable $th) {
             $value->downloaded_to_new_server = 'Failed';
             $value->server_fail_reason = $th->getMessage();
             $value->save();
+            echo 'failed to download ' . $url . '<br>';
+            echo $th->getMessage();
+            die();
         }
         break;
     }

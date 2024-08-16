@@ -76,14 +76,24 @@ Route::get('download-to-new-server', function () {
                 die();
             }
             echo 'downloading ' . $url . '<br>';
-            $file = file_get_contents($url);
-            file_put_contents($path, $file);
+
             $value->downloaded_to_new_server = 'Yes';
             $value->save();
             $value->new_server_path = 'files/' . $filename;
             $new_link = url('storage/' . $value->new_server_path);
             echo 'downloaded to ' . $new_link . '<hr>';
             //check if directtoryy exists
+
+            try {
+                $file = file_get_contents($url);
+                file_put_contents($path, $file);
+                echo '<h1>Downloaded: ' . $url . '</h1>';
+            } catch (\Throwable $th) {
+                echo 'failed to download ' . $url . '<br>';
+                echo $th->getMessage();
+                die();
+            }
+
             $d_exists = '';
             if (!file_exists(public_path('storage/files'))) {
                 $d_exists = 'does not exist';

@@ -4,6 +4,7 @@ use App\Models\Gen;
 use App\Models\MovieModel;
 use App\Models\Utils;
 use Dflydev\DotAccessData\Util;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
@@ -16,6 +17,23 @@ Route::get('/home', function () {
 */
 
 
+Route::get('play', function (Request $request) {
+    $moviemodel = MovieModel::find($request->id);
+    if ($moviemodel == null) {
+        return die('Movie not found');
+    }
+    $newUrl = url('storage/' . $moviemodel->url);
+    //html player for new and old links
+    $html = '<video width="320" height="240" controls>
+                <source src="' . $moviemodel->url . '" type="video/mp4">
+                Your browser does not support the video tag. 
+            </video>';
+    $html .= '<br><video width="320" height="240" controls>
+                <source src="' . $newUrl . '" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>';
+    echo $html;
+});
 Route::get('download-to-new-server', function () {
     //increase the memory limit
     ini_set('memory_limit', -1);

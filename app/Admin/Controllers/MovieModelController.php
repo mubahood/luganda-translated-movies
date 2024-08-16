@@ -150,6 +150,24 @@ class MovieModelController extends AdminController
                 'Yes' => 'Yes',
                 'No' => 'No',
             ]);
+        //downloaded_to_new_server
+        $grid->column('downloaded_to_new_server', __('Downloaded to new server'))->sortable()
+            ->filter([
+                'Yes' => 'Yes',
+                'No' => 'No',
+            ])->editable('select', [
+                'Yes' => 'Yes',
+                'No' => 'No',
+            ])->sortable();
+        //new_server_path
+        $grid->column('new_server_path', __('New server path'))->sortable()
+            ->display(function ($new_server_path) {
+                if ($new_server_path == null || $new_server_path == '') {
+                    return 'N/A';
+                }
+                $url = url('play?id=' . $this->id);
+                return '<a href="' . $url . '" target="_blank">' . 'PLAY' . '</a>';
+            });
         return $grid;
     }/* 
 https://storage.googleapis.com/mubahood-movies/m.schooldynamics.ug/storage/videos/1716608729_78492.mp4

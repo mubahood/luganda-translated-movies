@@ -155,9 +155,6 @@ class MovieModelController extends AdminController
             ->filter([
                 'Yes' => 'Yes',
                 'No' => 'No',
-            ])->editable('select', [
-                'Yes' => 'Yes',
-                'No' => 'No',
             ])->sortable();
         //new_server_path
         $grid->column('new_server_path', __('New server path'))->sortable()

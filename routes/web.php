@@ -53,6 +53,13 @@ Route::get('download-to-new-server', function () {
         ->orderBy('id', 'asc')
         ->limit(100)
         ->get();
+    if (isset($_GET['reset'])) {
+        MovieModel::where([
+            'uploaded_to_from_google' => 'Yes',
+        ])->update([
+            'downloaded_to_new_server' => 'No',
+        ]);
+    }
     /* 
             $table->string('downloaded_to_new_server')->default('No');
             $table->text('new_server_path')->nullable();
@@ -82,8 +89,8 @@ Route::get('download-to-new-server', function () {
             }
 
             $value->downloaded_to_new_server = 'Yes';
-            $value->save();
             $value->new_server_path = 'files/' . $filename;
+            $value->save();
             $new_link = url('storage/' . $value->new_server_path);
             echo 'downloaded to ' . $new_link . '<hr>';
             //check if directtoryy exists
@@ -122,8 +129,8 @@ Route::get('download-to-new-server', function () {
             $value->server_fail_reason = $th->getMessage();
             $value->save();
             echo 'failed to download ' . $url . '<br>';
-            echo $th->getMessage(); 
-        } 
+            echo $th->getMessage();
+        }
     }
 });
 

@@ -23,6 +23,7 @@ Route::get('play', function (Request $request) {
         return die('Movie not found');
     }
     $newUrl = url('storage/' . $moviemodel->new_server_path); 
+    echo $newUrl;
     //html player for new and old links
     $html = '<video width="320" height="240" controls>
                 <source src="' . $moviemodel->url . '" type="video/mp4">

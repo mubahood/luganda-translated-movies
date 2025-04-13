@@ -29,6 +29,13 @@ class HomeController extends Controller
         $u = Admin::user();
         $company = Company::find($u->company_id);
 
+        $movies = MovieModel::where([
+        ])->get();
+        /* foreach ($movies as $key => $value) {
+             dd($value);
+        } 
+        die(); */
+
         $no_downloading = MovieModel::where([
             'video_is_downloaded_to_server_status' => 'downloading',
         ])->first();

@@ -97,6 +97,7 @@ class MovieModel extends Model
     //getter for url
     public function getUrlAttribute($value)
     {
+        return $this->external_url; 
         if ($value == null || $value == '' || strlen($value) < 5) {
             return '';
         }

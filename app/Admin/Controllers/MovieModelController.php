@@ -32,6 +32,10 @@ class MovieModelController extends AdminController
             ]); */
         $grid = new Grid(new MovieModel());
 
+        $grid->column('thumbnail_url', __('Thumbnail')) 
+            ->width(100)
+            ->lightbox(['width' => 50, 'height' => 100])
+            ->sortable();
         $grid->quickSearch('title', 'url', 'external_url', 'local_video_link');
         $grid->model()->orderBy('updated_at', 'desc');
         $grid->disableBatchActions();
@@ -44,13 +48,14 @@ class MovieModelController extends AdminController
             ->display(function ($updated_at) {
                 return date('Y-m-d H:i:s', strtotime($updated_at));
             })->sortable()->hide();
-        $grid->column('title', __('Title'))->sortable();
+        $grid->column('title', __('Title'))->sortable()
+            ->editable('text')
+            ->width(300);
 
         $grid->column('url', __('Url'))->sortable()
             ->video(['videoWidth' => 720, 'videoHeight' => 480]);
 
-        $grid->column('thumbnail_url', __('Thumbnail'))
-            ->image('', 50, 50)->sortable();
+
         $grid->column('description', __('Description'))->hide();
         $grid->column('year', __('Year'))->sortable()->hide();
         $grid->column('downloaded_from_google', __('from google'))
@@ -62,7 +67,8 @@ class MovieModelController extends AdminController
             ->label([
                 'Yes' => 'success',
                 'No' => 'danger',
-            ]);
+            ])
+            ->hide();
 
         /*         
         $grid->column('rating', __('Rating'));
@@ -118,6 +124,17 @@ class MovieModelController extends AdminController
         $grid->column('video_is_downloaded_to_server_error_message', __('Video is downloaded to server error message'))->hide();
         $grid->column('category', __('Category'))->hide();
         $grid->column('category_id', __('Category id'))->hide();
+
+        //status
+        $grid->column('status_1', __('Status'))
+            ->display(function ($status) {
+                if ($status == 'Active') {
+                    return '<span class="label label-success">Active</span>';
+                } else {
+                    return '<span class="label label-danger">Inactive</span>';
+                }
+            });
+
         $grid->column('status', __('Status'))
             ->filter([
                 'Active' => 'Active',
@@ -128,19 +145,13 @@ class MovieModelController extends AdminController
                 'Inactive' => 'Inactive',
             ]);
 
-        $grid->column('local_video_link', __('Local Video'))
-            ->display(function ($local_video_link) {
-                if ($local_video_link == null || $local_video_link == '') {
-                    return 'N/A';
-                }
-                return '<a title="' . $local_video_link . '" href="'  . $local_video_link . '" target="_blank">' . 'VIEW' . '</a>';
-            })->sortable();
 
         $grid->column('downloaded_to_new_server', __('Downloaded to new server'))->sortable()
             ->filter([
                 'Yes' => 'Yes',
                 'No' => 'No',
-            ])->sortable();
+            ])->sortable()
+            ->hide();
         //new_server_path
         $grid->column('new_server_path', __('New server path'))->sortable()
             ->display(function ($new_server_path) {
@@ -148,8 +159,9 @@ class MovieModelController extends AdminController
                     return 'N/A';
                 }
                 $url = url('play?id=' . $this->id);
-                return '<a href="' . $url . '" target="_blank">' . 'PLAY ' .$new_server_path. '</a>';
-            }); 
+                return '<a href="' . $url . '" target="_blank">' . 'PLAY ' . $new_server_path . '</a>';
+            })
+            ->hide();
         return $grid;
 
         $grid->column('external_url', __('Source Link'))->sortable()
